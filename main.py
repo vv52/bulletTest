@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 from pygame.math import Vector2
 from random import Random
+from time import time
+from datetime import datetime, timedelta
 import sys
 
 # Define FPS
@@ -13,6 +15,7 @@ SCREEN_HEIGHT = 740
 
 # RGB color primitives
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 FAST = 5
 SLOW = 2.5
@@ -61,7 +64,7 @@ class Player(Sprite):
     def __init__(self, spawn_x, spawn_y):
         super().__init__("res/img/player.png", spawn_x, spawn_y)
         self.pos = vec(self.rect.center)
-        self.hitbox = Rect(2, 2, 4, 4)
+        self.hitbox = Rect(1, 1, 2, 2)
         self.hitbox.center = self.rect.center
         self.acc = vec(0, 0)
         self.speed = FAST
@@ -127,14 +130,14 @@ class WarblyBullet(BulletSprite):
         self.rect.center = self.pos
 
 
-def CircleSpawner(loc, div, kind, bullets, sprites):
+def CircleSpawner(loc, div, kind, offset, bullets, sprites):
     bullet_counter = 0
     angle = 360 / div
     while bullet_counter < div:
         if kind == "w":
-            new_bullet = WarblyBullet(loc.x, loc.y, bullet_counter * angle)
+            new_bullet = WarblyBullet(loc.x, loc.y, bullet_counter * angle + offset)
         else:
-            new_bullet = Bullet(loc.x, loc.y, bullet_counter * angle)
+            new_bullet = Bullet(loc.x, loc.y, bullet_counter * angle + offset)
         bullets.add(new_bullet)
         sprites.add(new_bullet)
         bullet_counter += 1
@@ -148,6 +151,9 @@ def main():
                                      pygame.HWSURFACE | pygame.DOUBLEBUF, vsync=1)
     pygame.display.set_caption("bulletTest")
 
+    font_color = WHITE
+    font = pygame.font.Font("res/misc/Symtext.ttf", 24)
+
     sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     players = pygame.sprite.Group()
@@ -156,8 +162,13 @@ def main():
     sprites.add(player)
     players.add(player)
 
+    best_time = time() - time()
+    current_time = time() - time()
+
     frame_counter = 0
     round = 0
+
+    start_time = time()
 
     running = True
     while running:
@@ -173,7 +184,7 @@ def main():
                     player.left = True
                 if event.key == pygame.K_RIGHT:
                     player.right = True
-                if event.key == pygame.K_z:
+                if event.key == pygame.K_LSHIFT:
                     player.speed = SLOW
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
@@ -184,16 +195,20 @@ def main():
                     player.left = False
                 if event.key == pygame.K_RIGHT:
                     player.right = False
-                if event.key == pygame.K_z:
+                if event.key == pygame.K_LSHIFT:
                     player.speed = FAST
 
-        if frame_counter % 30 == 0: # and frame counter < 150
+        if frame_counter % 30 == 0:         # and frame counter < 150
             round += 1
-            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round, "b", bullets, sprites)
+            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round, "b", round*10, bullets, sprites)
         if frame_counter % 100 == 0:
-            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round / 2, "w", bullets, sprites)
+            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round / 2, "w", 0, bullets, sprites)
         if frame_counter == 300:
             frame_counter = 0
+
+        #if frame_counter % 30 == 0:
+        #    round += 1
+        #    CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round * 10, "w", 0, bullets, sprites)
 
         player.move()
 
@@ -203,6 +218,11 @@ def main():
                 player.kill()
                 for obj in bullets:
                     obj.kill()
+                if current_time - start_time > best_time:
+                    best_time = current_time - start_time
+                current_time = time() - time()
+                start_time = time()
+                round -= (round - 1)
                 player = Player(256, 660)
                 sprites.add(player)
                 players.add(player)
@@ -211,6 +231,18 @@ def main():
         for obj in sprites:
             obj.draw(screen)
             obj.update()
+
+        current_time = time()
+        sec = timedelta(seconds=int(current_time - start_time))
+        sec2 = timedelta(seconds=int(best_time))
+        d = datetime(1, 1, 1) + sec
+        dd = datetime(1, 1, 1) + sec2
+        time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, font_color)
+        time_text_rect = time_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
+        best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, font_color)
+        best_text_rect = best_text.get_rect(center=(80, 40))
+        screen.blit(time_text, time_text_rect)
+        screen.blit(best_text, best_text_rect)
 
         pygame.display.flip()
         clock.tick(FPS)
