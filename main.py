@@ -44,7 +44,14 @@ class BulletSprite(pygame.sprite.Sprite):
         self.rect.center = [spawn_x, spawn_y]
 
     def update(self):
-        pass
+        if self.rect.right < 0:
+            self.kill()
+        elif self.rect.left > SCREEN_WIDTH:
+            self.kill()
+        elif self.rect.bottom > SCREEN_HEIGHT:
+            self.kill()
+        elif self.rect.top < 0:
+            self.kill()
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -184,7 +191,7 @@ def main():
             round += 1
             CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round, "b", bullets, sprites)
         if frame_counter % 100 == 0:
-            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 12, "w", bullets, sprites)
+            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round / 2, "w", bullets, sprites)
         if frame_counter == 300:
             frame_counter = 0
 
@@ -194,6 +201,8 @@ def main():
             player_hit = player.hitbox.colliderect(bullet)
             if player_hit:
                 player.kill()
+                for obj in bullets:
+                    obj.kill()
                 player = Player(256, 660)
                 sprites.add(player)
                 players.add(player)
