@@ -93,7 +93,6 @@ class Player(Sprite):
             self.pos.y = 8
 
         self.rect.center = self.pos
-        self.hitbox.center = self.pos
 
 
 class Bullet(BulletSprite):
@@ -159,6 +158,26 @@ def CircleSpawner(loc, div, kind, offset, bullets, sprites):
         bullet_counter += 1
 
 
+def BarSpawner(loc_y, div, angle, kind, bullets, sprites):
+    bullet_counter = 0
+    space = SCREEN_WIDTH / div
+    rand = Random()
+    range = int(round(div / 8))
+    bound = rand.randint(0, div - range)
+
+    while bullet_counter < div:
+        if bullet_counter < bound or bullet_counter > bound + range:
+            if kind == "w":
+                new_bullet = WarblyBullet(space * bullet_counter, loc_y, angle)
+            elif kind == "s":
+                new_bullet = SpiralBullet(space * bullet_counter, loc_y, angle)
+            else:
+                new_bullet = Bullet(space * bullet_counter, loc_y, angle)
+            bullets.add(new_bullet)
+            sprites.add(new_bullet)
+        bullet_counter += 1
+
+
 def main():
     pygame.init()
     pygame.mixer.init()
@@ -169,6 +188,8 @@ def main():
 
     font_color = WHITE
     font = pygame.font.Font("res/misc/Symtext.ttf", 24)
+
+    background = pygame.image.load("res/img/background.png")
 
     sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
@@ -181,10 +202,13 @@ def main():
     best_time = time() - time()
     current_time = time() - time()
 
-    frame_counter = 0
-    round = 0
-
     start_time = time()
+
+    rand = Random()
+
+    phase_counter = 0
+    frame_counter = 0
+    ticker = 0
 
     running = True
     while running:
@@ -214,19 +238,43 @@ def main():
                 if event.key == pygame.K_LSHIFT:
                     player.speed = FAST
 
-        if frame_counter % 30 == 0:         # and frame counter < 150
-            round += 1
-            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round, "b", round*10, bullets, sprites)
-        if frame_counter % 100 == 0:
-            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round / 2, "w", 0, bullets, sprites)
-        if frame_counter % 150 == 0:
-            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round * 3, "s", round, bullets, sprites)
-        if frame_counter == 300:
-            frame_counter = 0
+        if phase_counter < 1800:
+            if frame_counter % 25 == 0:
+                if ticker < 20:
+                    ticker += 1
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker, "b", ticker * 10, bullets, sprites)
+            if frame_counter % 100 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker / 2, "w", 0, bullets, sprites)
+            if frame_counter % 245 == 0 or frame_counter % 250 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker * 2, "s", ticker, bullets, sprites)
+            if frame_counter == 500:
+                frame_counter = 0
 
-        #if frame_counter % 30 == 0:
-        #    round += 1
-        #    CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round * 10, "w", 0, bullets, sprites)
+        if 1980 < phase_counter < 3780:
+            if frame_counter % 30 == 0:
+                if ticker < 30:
+                    ticker += 2
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
+                              3, "b", rand.randint(0, 360), bullets, sprites)
+            if frame_counter % 60 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
+                              2, "s", rand.randint(0, 360), bullets, sprites)
+            if frame_counter % 120 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4), ticker * 2, "w", 0, bullets, sprites)
+            if frame_counter == 480:
+                frame_counter = 0
+
+        if phase_counter > 3960:
+            if frame_counter % 60 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8),
+                              50, "b", rand.randint(45, 135), bullets, sprites)
+            if frame_counter % 200 == 0:
+                BarSpawner(SCREEN_HEIGHT / 8, 20, 90, "w", bullets, sprites)
+            if frame_counter % 300 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                              25, "s", rand.randint(0, 360), bullets, sprites)
+            if frame_counter == 600 == 0:
+                frame_counter = 0
 
         player.move()
 
@@ -240,7 +288,9 @@ def main():
                     best_time = current_time - start_time
                 current_time = time() - time()
                 start_time = time()
-                round -= (round - 1)
+                frame_counter = 0
+                phase_counter = 0
+                ticker = 0
                 player = Player(256, 660)
                 sprites.add(player)
                 players.add(player)
@@ -253,7 +303,7 @@ def main():
             elif bullet.rect.y < 0:
                 bullet.kill()
 
-        screen.fill(BLACK)
+        screen.blit(background, background.get_rect())
         for obj in sprites:
             obj.draw(screen)
             obj.update()
@@ -273,6 +323,7 @@ def main():
         pygame.display.flip()
         clock.tick(FPS)
         frame_counter += 1
+        phase_counter += 1
 
     pygame.display.quit()                           # More graceful exit handling
     pygame.mixer.quit()
