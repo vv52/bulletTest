@@ -55,8 +55,8 @@ class BulletSprite(pygame.sprite.Sprite):
 
 class Player(Sprite):
     def __init__(self, spawn_x, spawn_y):
-        super().__init__("res/img/player.png", spawn_x, spawn_y)
-        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/player_collide.png"))
+        super().__init__("res/img/player_c.png", spawn_x, spawn_y)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/player1_collide.png"))
         self.pos = vec(self.rect.center)
         self.acc = vec(0, 0)
         self.speed = FAST
@@ -66,6 +66,12 @@ class Player(Sprite):
         self.right = False
 
     def update(self):
+        if self.left:
+            self.image = pygame.image.load("res/img/player_l.png")
+        elif self.right:
+            self.image = pygame.image.load("res/img/player_r.png")
+        else:
+            self.image = pygame.image.load("res/img/player_c.png")
         pass
 
     def move(self):
@@ -108,9 +114,22 @@ class Bullet(BulletSprite):
         self.rect.center = self.pos
 
 
+class Bullet2(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/big_bullet.png", spawn_x, spawn_y, angle)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/big_bullet_collide.png"))
+        self.velocity = Vector2(1, 0).rotate(angle) * 2
+        self.pos = Vector2(self.rect.center)
+        self.rand = Random()
+
+    def update(self):
+        self.pos += self.velocity
+        self.rect.center = self.pos
+
+
 class WarblyBullet(BulletSprite):
     def __init__(self, spawn_x, spawn_y, angle):
-        super().__init__("res/img/warbly_bullet.png", spawn_x, spawn_y, angle)
+        super().__init__("res/img/warbly_bullet2.png", spawn_x, spawn_y, angle)
         self.mask = pygame.mask.from_surface(pygame.image.load("res/img/bullet_collide.png"))
         self.velocity = Vector2(1, 0).rotate(angle) * 1.5
         self.pos = Vector2(self.rect.center)
@@ -143,6 +162,55 @@ class SpiralBullet(BulletSprite):
         self.rect.center = self.pos
 
 
+class SpiralBullet2(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/spiral_bullet.png", spawn_x, spawn_y, angle)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/bullet_collide.png"))
+        self.velocity = Vector2(1, 0).rotate(angle) * 1.5
+        self.pos = Vector2(self.rect.center)
+        self.angle = angle
+        self.amplitude = 15
+        self.frequency = 50
+        self.ticker = 0
+
+    def update(self):
+        self.ticker += 1
+        if self.ticker % self.frequency == 0:
+            self.angle += self.amplitude
+            self.velocity = Vector2(1, 0).rotate(self.angle) * 2
+        self.pos += self.velocity
+        self.rect.center = self.pos
+
+
+class SpiralBullet3(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/big_spiral_bullet.png", spawn_x, spawn_y, angle)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/big_bullet_collide.png"))
+        self.velocity = Vector2(1, 0).rotate(angle) * 1.5
+        self.pos = Vector2(self.rect.center)
+        self.angle = angle
+        self.amplitude = -30
+        self.frequency = 50
+        self.ticker = 0
+
+    def update(self):
+        self.ticker += 1
+        if self.ticker % self.frequency == 0:
+            self.angle += self.amplitude
+            self.velocity = Vector2(1, 0).rotate(self.angle) * 2
+        self.pos += self.velocity
+        self.rect.center = self.pos
+
+
+class BossOne(Sprite):
+    def __init__(self, spawn_x, spawn_y):
+        super().__init__("res/img/yukari.png", spawn_x, spawn_y)
+        self.pos = vec(self.rect.center)
+
+    def update(self):
+        self.rect.center = self.pos
+
+
 def CircleSpawner(loc, div, kind, offset, bullets, sprites):
     bullet_counter = 0
     angle = 360 / div
@@ -151,6 +219,12 @@ def CircleSpawner(loc, div, kind, offset, bullets, sprites):
             new_bullet = WarblyBullet(loc.x, loc.y, bullet_counter * angle + offset)
         elif kind == "s":
             new_bullet = SpiralBullet(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "s2":
+            new_bullet = SpiralBullet2(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "s3":
+            new_bullet = SpiralBullet3(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "b2":
+            new_bullet = Bullet2(loc.x, loc.y, bullet_counter * angle + offset)
         else:
             new_bullet = Bullet(loc.x, loc.y, bullet_counter * angle + offset)
         bullets.add(new_bullet)
@@ -171,6 +245,12 @@ def BarSpawner(loc_y, div, angle, kind, bullets, sprites):
                 new_bullet = WarblyBullet(space * bullet_counter, loc_y, angle)
             elif kind == "s":
                 new_bullet = SpiralBullet(space * bullet_counter, loc_y, angle)
+            elif kind == "s2":
+                new_bullet = SpiralBullet2(space * bullet_counter, loc_y, angle)
+            elif kind == "s3":
+                new_bullet = SpiralBullet3(space * bullet_counter, loc_y, angle)
+            elif kind == "b2":
+                new_bullet = Bullet2(space * bullet_counter, loc_y, angle)
             else:
                 new_bullet = Bullet(space * bullet_counter, loc_y, angle)
             bullets.add(new_bullet)
@@ -184,20 +264,25 @@ def main():
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),
                                      pygame.HWSURFACE | pygame.DOUBLEBUF, vsync=1)
-    pygame.display.set_caption("bulletTest")
+    pygame.display.set_caption("Touhou: Destitute Dreamscape (alpha demo)")
 
     font_color = WHITE
     font = pygame.font.Font("res/misc/Symtext.ttf", 24)
 
-    background = pygame.image.load("res/img/background.png")
+    background = pygame.image.load("res/img/background6.png")
 
     sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     players = pygame.sprite.Group()
+    bosses = pygame.sprite.Group()
 
     player = Player(256, 660)
     sprites.add(player)
     players.add(player)
+
+    boss_one = BossOne(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
+    sprites.add(boss_one)
+    bosses.add(boss_one)
 
     best_time = time() - time()
     current_time = time() - time()
@@ -239,6 +324,18 @@ def main():
                     player.speed = FAST
 
         if phase_counter < 1800:
+            if boss_one.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3):
+                if boss_one.pos.x < SCREEN_WIDTH / 2:
+                    boss_one.pos.x += 1
+                elif boss_one.pos.x > SCREEN_WIDTH / 2:
+                    boss_one.pos.x -= 1
+                if boss_one.pos.y < SCREEN_HEIGHT / 3:
+                    boss_one.pos.y += 1
+                elif boss_one.pos.y > SCREEN_HEIGHT / 3:
+                    boss_one.pos.y -= 1
+
+    # phase one
+        if phase_counter <= 1800:
             if frame_counter % 25 == 0:
                 if ticker < 20:
                     ticker += 1
@@ -250,7 +347,19 @@ def main():
             if frame_counter == 500:
                 frame_counter = 0
 
-        if 1980 < phase_counter < 3780:
+        if 1800 < phase_counter < 1980:
+            if boss_one.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4):
+                if boss_one.pos.x < SCREEN_WIDTH / 2:
+                    boss_one.pos.x += 1
+                elif boss_one.pos.x > SCREEN_WIDTH / 2:
+                    boss_one.pos.x -= 1
+                if boss_one.pos.y < SCREEN_HEIGHT / 4:
+                    boss_one.pos.y += 1
+                elif boss_one.pos.y > SCREEN_HEIGHT / 4:
+                    boss_one.pos.y -= 1
+
+    # phase two
+        if 1980 <= phase_counter <= 3780:
             if frame_counter % 30 == 0:
                 if ticker < 30:
                     ticker += 2
@@ -264,7 +373,45 @@ def main():
             if frame_counter == 480:
                 frame_counter = 0
 
-        if phase_counter > 3960:
+        if 3780 < phase_counter < 3960:
+            if boss_one.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3):
+                if boss_one.pos.x < SCREEN_WIDTH / 2:
+                    boss_one.pos.x += 1
+                elif boss_one.pos.x > SCREEN_WIDTH / 2:
+                    boss_one.pos.x -= 1
+                if boss_one.pos.y < SCREEN_HEIGHT / 3:
+                    boss_one.pos.y += 1
+                elif boss_one.pos.y > SCREEN_HEIGHT / 3:
+                    boss_one.pos.y -= 1
+
+    # phase three
+        if 3960 <= phase_counter <= 4760:
+            if frame_counter % 30 == 0:
+                if ticker < 30:
+                    ticker += 1
+                #if ticker < 50:
+                #    ticker += 2
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker, "s2", ticker * 10, bullets, sprites)
+            if frame_counter % 100 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker / 5, "s3", ticker * 2, bullets, sprites)
+            if frame_counter % 300 == 0:
+                BarSpawner(32, 20, 90, "b2", bullets, sprites)
+            if frame_counter == 600:
+                frame_counter = 0
+
+        if 4760 < phase_counter < 4940:
+            if boss_one.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8):
+                if boss_one.pos.x < SCREEN_WIDTH / 2:
+                    boss_one.pos.x += 1
+                elif boss_one.pos.x > SCREEN_WIDTH / 2:
+                    boss_one.pos.x -= 1
+                if boss_one.pos.y < SCREEN_HEIGHT / 8:
+                    boss_one.pos.y += 1
+                elif boss_one.pos.y > SCREEN_HEIGHT / 8:
+                    boss_one.pos.y -= 1
+
+    # phase four
+        if 4940 <= phase_counter <= 6740:
             if frame_counter % 60 == 0:
                 CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8),
                               50, "b", rand.randint(45, 135), bullets, sprites)
@@ -275,6 +422,50 @@ def main():
                               25, "s", rand.randint(0, 360), bullets, sprites)
             if frame_counter == 600 == 0:
                 frame_counter = 0
+
+        if 6740 < phase_counter < 6800:
+            if boss_one.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10):
+                if boss_one.pos.x < SCREEN_WIDTH / 2:
+                    boss_one.pos.x += 1
+                elif boss_one.pos.x > SCREEN_WIDTH / 2:
+                    boss_one.pos.x -= 1
+                if boss_one.pos.y < SCREEN_HEIGHT / 10:
+                    boss_one.pos.y += 1
+                elif boss_one.pos.y > SCREEN_HEIGHT / 10:
+                    boss_one.pos.y -= 1
+
+    # phase four and a half
+        if 6800 <= phase_counter <= 7020:
+            if frame_counter % 10 == 0:
+                BarSpawner(32, 10, rand.randint(45, 135), "b2", bullets, sprites)
+            if frame_counter == 60:
+                frame_counter = 0
+
+        if 7020 < phase_counter < 7200:
+            if boss_one.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2):
+                if boss_one.pos.x < SCREEN_WIDTH / 2:
+                    boss_one.pos.x += 1
+                elif boss_one.pos.x > SCREEN_WIDTH / 2:
+                    boss_one.pos.x -= 1
+                if boss_one.pos.y < SCREEN_HEIGHT / 2:
+                    boss_one.pos.y += 1
+                elif boss_one.pos.y > SCREEN_HEIGHT / 2:
+                    boss_one.pos.y -= 1
+
+        if phase_counter == 7199:
+            for bullet in bullets:
+                bullet.kill()
+
+    # phase five
+        if 7200 <= phase_counter <= 9000:
+            if frame_counter % 30 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                              5, "b2", rand.randint(45, 135), bullets, sprites)
+            if frame_counter % 90 == 0:
+                CircleSpawner(vec(SCREEN_WIDTH / 2, 8),
+                              40, "s3", rand.randint(0, 360), bullets, sprites)
+            if frame_counter % 120 == 0:
+                BarSpawner(SCREEN_HEIGHT - 8, 30, 270, "b", bullets, sprites)
 
         player.move()
 
