@@ -47,14 +47,7 @@ class BulletSprite(pygame.sprite.Sprite):
         self.rect.center = [spawn_x, spawn_y]
 
     def update(self):
-        if self.rect.right < 0:
-            self.kill()
-        elif self.rect.left > SCREEN_WIDTH:
-            self.kill()
-        elif self.rect.bottom > SCREEN_HEIGHT:
-            self.kill()
-        elif self.rect.top < 0:
-            self.kill()
+        pass
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -63,9 +56,8 @@ class BulletSprite(pygame.sprite.Sprite):
 class Player(Sprite):
     def __init__(self, spawn_x, spawn_y):
         super().__init__("res/img/player.png", spawn_x, spawn_y)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/player_collide.png"))
         self.pos = vec(self.rect.center)
-        self.hitbox = Rect(1, 1, 2, 2)
-        self.hitbox.center = self.rect.center
         self.acc = vec(0, 0)
         self.speed = FAST
         self.up = False
@@ -107,6 +99,7 @@ class Player(Sprite):
 class Bullet(BulletSprite):
     def __init__(self, spawn_x, spawn_y, angle):
         super().__init__("res/img/bullet.png", spawn_x, spawn_y, angle)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/bullet_collide.png"))
         self.velocity = Vector2(1, 0).rotate(angle) * 2
         self.pos = Vector2(self.rect.center)
         self.rand = Random()
@@ -118,7 +111,8 @@ class Bullet(BulletSprite):
 
 class WarblyBullet(BulletSprite):
     def __init__(self, spawn_x, spawn_y, angle):
-        super().__init__("res/img/bullet2.png", spawn_x, spawn_y, angle)
+        super().__init__("res/img/warbly_bullet.png", spawn_x, spawn_y, angle)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/bullet_collide.png"))
         self.velocity = Vector2(1, 0).rotate(angle) * 1.5
         self.pos = Vector2(self.rect.center)
         self.rand = Random()
@@ -130,12 +124,34 @@ class WarblyBullet(BulletSprite):
         self.rect.center = self.pos
 
 
+class SpiralBullet(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/spiral_bullet.png", spawn_x, spawn_y, angle)
+        self.mask = pygame.mask.from_surface(pygame.image.load("res/img/bullet_collide.png"))
+        self.velocity = Vector2(1, 0).rotate(angle) * 2
+        self.pos = Vector2(self.rect.center)
+        self.angle = angle
+        self.amplitude = 5
+        self.frequency = 10
+        self.ticker = 0
+
+    def update(self):
+        self.ticker += 1
+        if self.ticker % self.frequency == 0:
+            self.angle += self.amplitude
+            self.velocity = Vector2(1, 0).rotate(self.angle) * 2
+        self.pos += self.velocity
+        self.rect.center = self.pos
+
+
 def CircleSpawner(loc, div, kind, offset, bullets, sprites):
     bullet_counter = 0
     angle = 360 / div
     while bullet_counter < div:
         if kind == "w":
             new_bullet = WarblyBullet(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "s":
+            new_bullet = SpiralBullet(loc.x, loc.y, bullet_counter * angle + offset)
         else:
             new_bullet = Bullet(loc.x, loc.y, bullet_counter * angle + offset)
         bullets.add(new_bullet)
@@ -203,6 +219,8 @@ def main():
             CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round, "b", round*10, bullets, sprites)
         if frame_counter % 100 == 0:
             CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round / 2, "w", 0, bullets, sprites)
+        if frame_counter % 150 == 0:
+            CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), round * 3, "s", round, bullets, sprites)
         if frame_counter == 300:
             frame_counter = 0
 
@@ -213,7 +231,7 @@ def main():
         player.move()
 
         for bullet in bullets:
-            player_hit = player.hitbox.colliderect(bullet)
+            player_hit = pygame.sprite.collide_mask(player, bullet)
             if player_hit:
                 player.kill()
                 for obj in bullets:
@@ -226,6 +244,14 @@ def main():
                 player = Player(256, 660)
                 sprites.add(player)
                 players.add(player)
+            if bullet.rect.x < 0:
+                bullet.kill()
+            elif bullet.rect.x > SCREEN_WIDTH:
+                bullet.kill()
+            elif bullet.rect.y > SCREEN_HEIGHT:
+                bullet.kill()
+            elif bullet.rect.y < 0:
+                bullet.kill()
 
         screen.fill(BLACK)
         for obj in sprites:
