@@ -215,17 +215,17 @@ class MagicCircle(Sprite):
     def __init__(self, spawn_x, spawn_y):
         super().__init__("res/img/magic_circle.png", spawn_x, spawn_y)
         self.pos = vec(self.rect.center)
-        self.og_rect = self.rect
         self.frame = 0
+        self.original_image = pygame.image.load("res/img/magic_circle.png")
+        self.image = self.original_image
+        self.angle = 0
 
     def update(self):
-       # if self.frame == -3600:
-       #     self.frame = 0
-       # self.frame += 1
-       # if self.frame % 10 == 0:
-       #     self.image = pygame.transform.rotate(self.image, self.frame)
-       #     self.rect = self.image.get_rect()
-        self.rect.center = self.pos
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
+        self.angle += 1 % 360
+        cx, cy = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = (cx, cy)
 
 
 def CircleSpawner(loc, div, kind, offset, bullets, sprites):
@@ -355,7 +355,7 @@ def main():
                     boss_one.pos.y += 1
                 elif boss_one.pos.y > SCREEN_HEIGHT / 3:
                     boss_one.pos.y -= 1
-                magic_circle.pos = boss_one.pos
+                magic_circle.rect.center = boss_one.rect.center
 
     # phase one
         if phase_counter <= 1800:
@@ -380,7 +380,7 @@ def main():
                     boss_one.pos.y += 1
                 elif boss_one.pos.y > SCREEN_HEIGHT / 4:
                     boss_one.pos.y -= 1
-                magic_circle.pos = boss_one.pos
+                magic_circle.rect.center = boss_one.rect.center
 
     # phase two
         if 1980 <= phase_counter <= 3780:
@@ -407,7 +407,7 @@ def main():
                     boss_one.pos.y += 1
                 elif boss_one.pos.y > SCREEN_HEIGHT / 3:
                     boss_one.pos.y -= 1
-                magic_circle.pos = boss_one.pos
+                magic_circle.rect.center = boss_one.rect.center
 
     # phase three
         if 3960 <= phase_counter <= 4760:
@@ -434,7 +434,7 @@ def main():
                     boss_one.pos.y += 1
                 elif boss_one.pos.y > SCREEN_HEIGHT / 8:
                     boss_one.pos.y -= 1
-                magic_circle.pos = boss_one.pos
+                magic_circle.rect.center = boss_one.rect.center
 
     # phase four
         if 4940 <= phase_counter <= 6740:
@@ -459,7 +459,7 @@ def main():
                     boss_one.pos.y += 1
                 elif boss_one.pos.y > SCREEN_HEIGHT / 10:
                     boss_one.pos.y -= 1
-                magic_circle.pos = boss_one.pos
+                magic_circle.rect.center = boss_one.rect.center
 
     # phase four and a half
         if 6800 <= phase_counter <= 7020:
@@ -478,7 +478,7 @@ def main():
                     boss_one.pos.y += 1
                 elif boss_one.pos.y > SCREEN_HEIGHT / 2:
                     boss_one.pos.y -= 1
-                magic_circle.pos = boss_one.pos
+                magic_circle.rect.center = boss_one.rect.center
 
         if phase_counter == 7199:
             for bullet in bullets:
