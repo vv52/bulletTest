@@ -20,8 +20,6 @@ WHITE = (255, 255, 255)
 FAST = 5
 SLOW = 2.5
 
-WRANGE = 6
-
 vec = pygame.math.Vector2
 
 
@@ -35,7 +33,6 @@ def main():
 
     font_color = WHITE
     font = pygame.font.Font("res/misc/Symtext.ttf", 24)
-
 
     sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
@@ -82,8 +79,12 @@ def main():
                     player_one.right = False
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = FAST
+
+        start_time = time()
         pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
-                           screen, font, font_color, clock, FPS, player_one)
+                                        screen, font, font_color, clock, FPS, player_one)
+        end_time = time()
+        stage_one_time = end_time - start_time
         if not pass_stage:
             running = False
 

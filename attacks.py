@@ -1,6 +1,9 @@
 from random import Random
 import projectiles
 
+SCREEN_WIDTH = 512
+SCREEN_HEIGHT = 740
+
 
 def CircleSpawner(loc, div, kind, offset, bullets, sprites):
     bullet_counter = 0
