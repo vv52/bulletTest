@@ -16,6 +16,7 @@ SCREEN_HEIGHT = 740
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+TURQUOISE = (0, 255, 255)
 
 FAST = 5
 SLOW = 2.5
@@ -31,7 +32,6 @@ def main():
                                      pygame.HWSURFACE | pygame.DOUBLEBUF, vsync=1)
     pygame.display.set_caption("Touhou: Destitute Dreamscape (alpha demo)")
 
-    font_color = WHITE
     font = pygame.font.Font("res/misc/Symtext.ttf", 24)
 
     sprites = pygame.sprite.Group()
@@ -85,7 +85,7 @@ def main():
 
         start_time = time()
         pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, screen,
-                                        font, font_color, clock, FPS, player_one, player_magic_circle)
+                                        font, clock, FPS, player_one, player_magic_circle)
         end_time = time()
         stage_one_time = end_time - start_time
         if not pass_stage:

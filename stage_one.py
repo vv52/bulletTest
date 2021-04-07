@@ -9,7 +9,9 @@ from random import Random
 SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
+BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+TURQUOISE = (0, 255, 255)
 
 FAST = 5
 SLOW = 2.5
@@ -18,7 +20,7 @@ vec = pygame.math.Vector2
 
 
 def StageOne(boss, magic_circle, bullets, sprites, players, screen,
-             font, font_color, clock, FPS, player_one, player_magic_circle):
+             font, clock, FPS, player_one, player_magic_circle):
     background = pygame.image.load("res/img/background6.png")
     best_time = time() - time()
     current_time = time() - time()
@@ -32,6 +34,9 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
     death_loc = vec(0, 0)
     death = False
     death_counter = 1
+    graze_counter = 0
+    best_graze = 0
+    last_graze_hit = False
 
     stage = True
     while stage:
@@ -50,7 +55,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                     player_one.right = True
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = SLOW
-                    player_magic_circle.fast = True
+                    #player_magic_circle.fast = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     player_one.up = False
@@ -62,9 +67,9 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                     player_one.right = False
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = FAST
-                    player_magic_circle.fast = False
+                    #player_magic_circle.fast = False
 
-        if phase_counter < 1800:
+        if phase_counter < 200:
             if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3):
                 magic_circle.fast = True
                 if boss.pos.x < SCREEN_WIDTH / 2:
@@ -134,7 +139,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                 magic_circle.rect.center = boss.rect.center
 
     # phase three
-        if 3960 <= phase_counter <= 4760:
+        if 3960 <= phase_counter <= 5760:
             magic_circle.fast = False
             if frame_counter % 30 == 0:
                 if ticker < 30:
@@ -147,7 +152,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
             if frame_counter == 600:
                 frame_counter = 0
 
-        if 4760 < phase_counter < 4940:
+        if 5760 < phase_counter < 5940:
             if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8):
                 magic_circle.fast = True
                 if boss.pos.x < SCREEN_WIDTH / 2:
@@ -161,7 +166,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                 magic_circle.rect.center = boss.rect.center
 
     # phase four
-        if 4940 <= phase_counter <= 6740:
+        if 5940 <= phase_counter <= 7740:
             magic_circle.fast = False
             if frame_counter % 60 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8),
@@ -174,7 +179,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
             if frame_counter == 600 == 0:
                 frame_counter = 0
 
-        if 6740 < phase_counter < 6800:
+        if 7740 < phase_counter < 7800:
             if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10):
                 magic_circle.fast = True
                 if boss.pos.x < SCREEN_WIDTH / 2:
@@ -188,14 +193,14 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                 magic_circle.rect.center = boss.rect.center
 
     # phase four and a half
-        if 6800 <= phase_counter <= 7020:
+        if 7800 <= phase_counter <= 8020:
             magic_circle.fast = False
             if frame_counter % 10 == 0:
                 attacks.BarSpawner(32, 10, rand.randint(45, 135), "b2", bullets, sprites)
             if frame_counter == 60:
                 frame_counter = 0
 
-        if 7020 < phase_counter < 7200:
+        if 8020 < phase_counter < 8200:
             if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2):
                 magic_circle.fast = True
                 if boss.pos.x < SCREEN_WIDTH / 2:
@@ -208,12 +213,12 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                     boss.pos.y -= 1
                 magic_circle.rect.center = boss.rect.center
 
-        if phase_counter == 7199:
+        if phase_counter == 8199:
             for bullet in bullets:
                 bullet.kill()
 
     # phase five
-        if 7200 <= phase_counter <= 9000:
+        if 8200 <= phase_counter <= 10000:
             magic_circle.fast = False
             if frame_counter % 30 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
@@ -222,10 +227,10 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, 8),
                               40, "s3", rand.randint(0, 360), bullets, sprites)
             if frame_counter % 120 == 0:
-                attacks.BarSpawner(SCREEN_HEIGHT - 8, 30, 270, "b", bullets, sprites)
+                attacks.BarSpawner(SCREEN_HEIGHT - 8, 20, 270, "w", bullets, sprites)
 
     # if over 9000
-        if phase_counter > 9000:
+        if phase_counter > 10000:
             magic_circle.fast = False
             stage = False
             return 1
@@ -238,7 +243,6 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
             if player_one_hit:
                 death = True
                 death_loc = player_one.rect.center
-
                 player_one.kill()
                 for obj in bullets:
                     obj.kill()
@@ -264,6 +268,21 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
             elif bullet.rect.y < 0:
                 bullet.kill()
 
+        graze_hit = pygame.sprite.spritecollide(player_one, bullets, False)
+        if graze_hit:
+            player_magic_circle.fast = True
+            player_one.grazing = True
+            if last_graze_hit:
+                graze_counter += 1
+        else:
+            player_magic_circle.fast = False
+            player_one.grazing = False
+            if last_graze_hit:
+                if graze_counter > best_graze:
+                    best_graze = graze_counter
+                graze_counter = 0
+        last_graze_hit = player_one.grazing
+
         screen.blit(background, background.get_rect())
         for obj in sprites:
             obj.draw(screen)
@@ -286,42 +305,48 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
         sec2 = timedelta(seconds=int(best_time))
         d = datetime(1, 1, 1) + sec
         dd = datetime(1, 1, 1) + sec2
-        time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, font_color)
+        time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, WHITE)
         time_text_rect = time_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
-        best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, font_color)
+        best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, WHITE)
         best_text_rect = best_text.get_rect(center=(80, 40))
-        points_text = font.render(f"{points}", True, font_color)
+        points_text = font.render(f"{points}", True, WHITE)
         points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
-        best_points_text = font.render(f"{best_points}", True, font_color)
+        best_points_text = font.render(f"{best_points}", True, WHITE)
         best_points_text_rect = best_points_text.get_rect(center=(80, 60))
+        graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
+        graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 80))
+        best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
+        best_graze_text_rect = best_graze_text.get_rect(center=(80, 80))
         screen.blit(time_text, time_text_rect)
         screen.blit(best_text, best_text_rect)
         screen.blit(points_text, points_text_rect)
         screen.blit(best_points_text, best_points_text_rect)
+        screen.blit(graze_count_text, graze_count_text_rect)
+        screen.blit(best_graze_text, best_graze_text_rect)
 
         if phase_counter <= 300:
             if phase_counter % 60 < 30:
-                phase_text = font.render("PHASE ONE", True, font_color)
+                phase_text = font.render("PHASE ONE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
         if 1980 <= phase_counter <= 2280:
             if phase_counter % 60 < 30:
-                phase_text = font.render("PHASE TWO", True, font_color)
+                phase_text = font.render("PHASE TWO", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
         if 3960 <= phase_counter <= 4260:
             if phase_counter % 60 < 30:
-                phase_text = font.render("PHASE THREE", True, font_color)
+                phase_text = font.render("PHASE THREE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
         if 4940 <= phase_counter <= 5240:
             if phase_counter % 60 < 30:
-                phase_text = font.render("PHASE FOUR", True, font_color)
+                phase_text = font.render("PHASE FOUR", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
         if 7200 <= phase_counter <= 7500:
             if phase_counter % 60 < 30:
-                phase_text = font.render("PHASE FIVE", True, font_color)
+                phase_text = font.render("PHASE FIVE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
 
@@ -329,4 +354,12 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen,
         clock.tick(FPS)
         frame_counter += 1
         phase_counter += 1
-        points += 1
+        if player_one.grazing:
+            if 1000 <= graze_counter < 2500:
+                points += 3
+            elif graze_counter > 2500:
+                points += 4
+            else:
+                points += 2
+        else:
+            points += 1

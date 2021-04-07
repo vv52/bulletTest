@@ -23,6 +23,7 @@ class Player(sprite.Sprite):
         self.down = False
         self.left = False
         self.right = False
+        self.grazing = False
 
     def update(self):
         if self.left:
@@ -73,7 +74,7 @@ class PlayerMagicCircle(sprite.Sprite):
         cx, cy = self.rect.center
         if self.fast:
             self.image = pygame.transform.rotate(self.original_image, self.angle)
-            self.angle += -3 % -360
+            self.angle += -4 % -360
         else:
             self.image = pygame.transform.rotate(self.original_image, self.angle)
             self.angle += 2 % 360
