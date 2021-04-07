@@ -208,7 +208,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
 
     # phase five
         if 7200 <= phase_counter <= 9000:
-                magic_circle.fast = False
+            magic_circle.fast = False
             if frame_counter % 30 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
                               5, "b2", rand.randint(45, 135), bullets, sprites)
@@ -220,7 +220,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
 
     # if over 9000
         if phase_counter > 9000:
-                magic_circle.fast = False
+            magic_circle.fast = False
             stage = False
             return 1
 
