@@ -14,7 +14,7 @@ vec = pygame.math.Vector2
 
 class Player(sprite.Sprite):
     def __init__(self, spawn_x, spawn_y):
-        super().__init__("res/img/player_c.png", spawn_x, spawn_y)
+        super().__init__("res/img/player_c_h.png", spawn_x, spawn_y)
         self.mask = pygame.mask.from_surface(pygame.image.load("res/img/player1_collide.png"))
         self.pos = vec(self.rect.center)
         self.acc = vec(0, 0)
@@ -27,11 +27,11 @@ class Player(sprite.Sprite):
 
     def update(self):
         if self.left:
-            self.image = pygame.image.load("res/img/player_l.png")
+            self.image = pygame.image.load("res/img/player_l_h.png")
         elif self.right:
-            self.image = pygame.image.load("res/img/player_r.png")
+            self.image = pygame.image.load("res/img/player_r_h.png")
         else:
-            self.image = pygame.image.load("res/img/player_c.png")
+            self.image = pygame.image.load("res/img/player_c_h.png")
 
     def move(self):
         if self.up:

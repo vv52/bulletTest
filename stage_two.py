@@ -22,7 +22,7 @@ vec = pygame.math.Vector2
 
 def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
              screen, font, clock, FPS, player_one, player_magic_circle):
-    background = pygame.image.load("res/img/background6.png")
+    background = pygame.image.load("res/img/background7.png")
     best_time = time() - time()
     current_time = time() - time()
     start_time = time()
@@ -91,47 +91,67 @@ def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
                 magic_circle.rect.center = boss.rect.center
 
     # phase one
-        if phase_counter <= 1800:
+        if 1 <= phase_counter <= 1800:
             magic_circle.fast = False
-            if frame_counter % 25 == 0:
-                if ticker < 20:
-                    ticker += 1
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker, "b", ticker * 10, bullets, sprites)
-            if frame_counter % 100 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker / 2, "w", 0, bullets, sprites)
-            if frame_counter % 245 == 0 or frame_counter % 250 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker * 2, "s", ticker, bullets, sprites)
-            if frame_counter == 500:
+            if frame_counter % 30 == 0:
+                if frame_counter % 60 == 0:
+                    attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
+                                          3, "s4", 0, bullets, sprites)
+                else:
+                    attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), 5, "s4i", 0, bullets, sprites)
+            if frame_counter % 50 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH - 16, 16), 10, "b2", rand.randint(90, 135), bullets, sprites)
+                attacks.CircleSpawner(vec(16, 16), 10, "b2", rand.randint(0, 45), bullets, sprites)
+            if frame_counter % 60 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
+                                      rand.randint(1, 10), "w", rand.randint(0, 360), bullets, sprites)
+            if frame_counter % 600 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 8, (SCREEN_HEIGHT - SCREEN_HEIGHT / 8)),
+                                      rand.randint(3, 7), "s4", 180, bullets, sprites)
+                attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH /8), SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)),
+                                      rand.randint(3, 7), "s4i", 180, bullets, sprites)
+            if frame_counter == 600:
                 frame_counter = 0
 
         if 1800 < phase_counter < 1980:
-            if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4):
+            if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2):
                 magic_circle.fast = True
                 if boss.pos.x < SCREEN_WIDTH / 2:
                     boss.pos.x += 1
                 elif boss.pos.x > SCREEN_WIDTH / 2:
                     boss.pos.x -= 1
-                if boss.pos.y < SCREEN_HEIGHT / 4:
+                if boss.pos.y < SCREEN_HEIGHT / 2:
                     boss.pos.y += 1
-                elif boss.pos.y > SCREEN_HEIGHT / 4:
+                elif boss.pos.y > SCREEN_HEIGHT / 2:
                     boss.pos.y -= 1
                 magic_circle.rect.center = boss.rect.center
 
     # phase two
-        if 1980 <= phase_counter <= 3780:
+        if phase_counter == 1979:
+            for bullet in bullets:
+                bullet.kill()
+        if 1980 <= phase_counter <= 3780:           # FINISH
             magic_circle.fast = False
-            if frame_counter % 30 == 0:
-                if ticker < 30:
-                    ticker += 2
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
-                              3, "b", rand.randint(0, 360), bullets, sprites)
-            if frame_counter % 60 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
-                              2, "s", rand.randint(0, 360), bullets, sprites)
-            if frame_counter % 120 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4), ticker * 2, "w", 0, bullets, sprites)
-            if frame_counter == 480:
+            if frame_counter % 50 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4i",
+                                      frame_counter % 360, bullets, sprites)
+            if frame_counter % 52 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4",
+                                      frame_counter % 360, bullets, sprites)
+            if frame_counter % 54 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4i",
+                                      frame_counter % 360, bullets, sprites)
+            if frame_counter % 100 == 0:
+                if frame_counter % 200 == 0:
+                    attacks.QuarterSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 30, "b2", 30, bullets, sprites)
+                    attacks.QuarterSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 30, "b2", 210, bullets, sprites)
+                else:
+                    attacks.QuarterSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 30, "b2", -30, bullets, sprites)
+                    attacks.QuarterSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 30, "b2", 150, bullets, sprites)
+            if frame_counter == 600:
                 frame_counter = 0
+
+# CHANGE EVERYTHING BELOW HERE
 
         if 3780 < phase_counter < 3960:
             if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3):

@@ -5,7 +5,9 @@ from random import Random
 from time import time
 from datetime import datetime, timedelta
 import player
+import player_attacks
 import stage_one
+import stage_two
 import yukari
 import sys
 
@@ -37,6 +39,7 @@ def main():
     sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     players = pygame.sprite.Group()
+    p_attacks = pygame.sprite.Group()
     bosses = pygame.sprite.Group()
     circles = pygame.sprite.Group()
 
@@ -83,9 +86,17 @@ def main():
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = FAST
 
+        #start_time = time()
+        #pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
+        #                                screen, font, clock, FPS, player_one, player_magic_circle)
+        #end_time = time()
+        #stage_one_time = end_time - start_time
+        #if not pass_stage:
+        #    running = False
+
         start_time = time()
-        pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, screen,
-                                        font, clock, FPS, player_one, player_magic_circle)
+        pass_stage = stage_two.StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
+                                        screen, font, clock, FPS, player_one, player_magic_circle)
         end_time = time()
         stage_one_time = end_time - start_time
         if not pass_stage:
