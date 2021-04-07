@@ -9,13 +9,16 @@ from random import Random
 SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
+WHITE = (255, 255, 255)
+
 FAST = 5
 SLOW = 2.5
 
 vec = pygame.math.Vector2
 
 
-def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_color, clock, FPS, player_one):
+def StageOne(boss, magic_circle, bullets, sprites, players, screen,
+             font, font_color, clock, FPS, player_one, player_magic_circle):
     background = pygame.image.load("res/img/background6.png")
     best_time = time() - time()
     current_time = time() - time()
@@ -26,6 +29,9 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
     ticker = 0
     points = 0
     best_points = 0
+    death_loc = vec(0, 0)
+    death = False
+    death_counter = 1
 
     stage = True
     while stage:
@@ -44,6 +50,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
                     player_one.right = True
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = SLOW
+                    player_magic_circle.fast = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     player_one.up = False
@@ -55,6 +62,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
                     player_one.right = False
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = FAST
+                    player_magic_circle.fast = False
 
         if phase_counter < 1800:
             if boss.pos != vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3):
@@ -131,8 +139,6 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
             if frame_counter % 30 == 0:
                 if ticker < 30:
                     ticker += 1
-                #if ticker < 50:
-                #    ticker += 2
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker, "s2", ticker * 10, bullets, sprites)
             if frame_counter % 100 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker / 5, "s3", ticker * 2, bullets, sprites)
@@ -225,10 +231,14 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
             return 1
 
         player_one.move()
+        player_magic_circle.rect.center = player_one.rect.center
 
         for bullet in bullets:
             player_one_hit = pygame.sprite.collide_mask(player_one, bullet)
             if player_one_hit:
+                death = True
+                death_loc = player_one.rect.center
+
                 player_one.kill()
                 for obj in bullets:
                     obj.kill()
@@ -258,6 +268,18 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
         for obj in sprites:
             obj.draw(screen)
             obj.update()
+
+        player_one.draw(screen)
+
+        if death:
+            explosion = pygame.image.load(f"res/img/pop{death_counter}.png")
+            explosion_rect = explosion.get_rect(center=death_loc)
+            screen.blit(explosion, explosion_rect)
+            if phase_counter % 5 == 0:
+                death_counter += 1
+            if death_counter > 5:
+                death_counter = 1
+                death = False
 
         current_time = time()
         sec = timedelta(seconds=int(current_time - start_time))
@@ -302,7 +324,6 @@ def StageOne(boss, magic_circle, bullets, sprites, players, screen, font, font_c
                 phase_text = font.render("PHASE FIVE", True, font_color)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-
 
         pygame.display.flip()
         clock.tick(FPS)

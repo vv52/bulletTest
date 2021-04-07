@@ -45,8 +45,11 @@ def main():
     players.add(player_one)
 
     magic_circle = yukari.MagicCircle(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
+    player_magic_circle = player.PlayerMagicCircle(256, 660)
     sprites.add(magic_circle)
+    sprites.add(player_magic_circle)
     circles.add(magic_circle)
+    circles.add(player_magic_circle)
 
     boss = yukari.Yukari(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
     sprites.add(boss)
@@ -81,8 +84,8 @@ def main():
                     player_one.speed = FAST
 
         start_time = time()
-        pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
-                                        screen, font, font_color, clock, FPS, player_one)
+        pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, screen,
+                                        font, font_color, clock, FPS, player_one, player_magic_circle)
         end_time = time()
         stage_one_time = end_time - start_time
         if not pass_stage:
