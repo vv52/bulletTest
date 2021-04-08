@@ -25,6 +25,7 @@ class Player(sprite.Sprite):
         self.right = False
         self.grazing = False
         self.clears = 2
+        self.spawn_timer = 120
 
     def update(self):
         if self.left:
@@ -33,6 +34,8 @@ class Player(sprite.Sprite):
             self.image = pygame.image.load("res/img/player_r_h.png")
         else:
             self.image = pygame.image.load("res/img/player_c_h.png")
+        if self.spawn_timer > 0:
+            self.spawn_timer -= 1
 
     def move(self):
         if self.up:

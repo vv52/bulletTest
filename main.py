@@ -70,10 +70,14 @@ def main():
             if event.type == pygame.QUIT:  # Handle window exit gracefully
                 running = False
 
+        # TITLE
+
             title_check = title.TitleScreen(clock, screen)
             if not title_check:
                 running = False
                 break
+
+        # STAGE ONE
 
             start_time = time()
             pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, orbs,
@@ -84,6 +88,8 @@ def main():
             if not pass_stage:
                 running = False
                 break
+
+        # STAGE TWO
 
             start_time = time()
             pass_stage = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
