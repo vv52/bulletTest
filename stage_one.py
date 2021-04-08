@@ -8,12 +8,15 @@ import collectibles
 import movement
 from random import Random
 
+FPS = 60
+
 SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 TURQUOISE = (0, 255, 255)
+YELLOW = (255, 255, 0)
 
 FAST = 5
 SLOW = 2.5
@@ -23,11 +26,9 @@ vec = pygame.math.Vector2
 clear_icon = pygame.image.load("res/img/clear.png")
 life_icon = pygame.image.load("res/img/life.png")
 
-# handle returning pause differential
-
 
 def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
-             screen, font, clock, FPS, player_one, player_magic_circle,
+             screen, font, clock, points, player_one, player_magic_circle,
              lives, pause_differential):
     background = pygame.image.load("res/img/background6.png")
     best_time = time() - time()
@@ -37,7 +38,6 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     phase_counter = 0
     frame_counter = 0
     ticker = 0
-    points = 0
     best_points = 0
     death_loc = vec(0, 0)
     death = False
@@ -46,6 +46,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     best_graze = 0
     last_graze_hit = False
     total_graze = 0
+    total_gems = 0
     extend_10k = False
     extend_20k = False
     inv_text = font.render("INVINCIBLE", True, WHITE)
@@ -56,7 +57,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 stage = False
-                return 0
+                return 0, points, total_graze, total_gems, player_one.clears, lives, pause_differential
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -75,14 +76,15 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     pause_differential += pause_end - pause_start
                     if not unpause:
                         stage = False
-                        return 0
-                if event.key == pygame.K_z:
+                        return 0, points, total_graze, total_gems, player_one.clears, lives, pause_differential
+                if event.key == pygame.K_z and player_one.spawn_timer == 0:
                     if player_one.clears > 0:
                         player_one.clears -= 1
                         for bullet in bullets:
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
+                            total_gems += 1
                             bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
@@ -236,10 +238,10 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
 
     # END STAGE
 
-        if phase_counter > 10000:
+        if phase_counter > 10300:
             magic_circle.fast = False
             stage = False
-            return 1
+            return 1, points, total_graze, total_gems, player_one.clears, lives, pause_differential
 
     # HANDLE PLAYER
 
@@ -274,6 +276,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     current_time = time() - time()
                     start_time = time()
                     points = 0
+                    total_gems = 0
                     frame_counter = 0
                     phase_counter = 0
                     ticker = 0
@@ -338,17 +341,17 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
 
         points_text = font.render(f"{points}", True, WHITE)
         points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
-        best_points_text = font.render(f"{best_points}", True, WHITE)
-        best_points_text_rect = best_points_text.get_rect(center=(80, 40))
+        total_gems_text = font.render(f"{total_gems}", True, YELLOW)
+        total_gems_text_rect = total_gems_text.get_rect(center=(80, 40))
         graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
         graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
-        best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
-        best_graze_text_rect = best_graze_text.get_rect(center=(80, 60))
+        total_graze_text = font.render(f"{total_graze}", True, TURQUOISE)
+        total_graze_text_rect = total_graze_text.get_rect(center=(80, 60))
 
         screen.blit(points_text, points_text_rect)
-        screen.blit(best_points_text, best_points_text_rect)
+        screen.blit(total_gems_text, total_gems_text_rect)
         screen.blit(graze_count_text, graze_count_text_rect)
-        screen.blit(best_graze_text, best_graze_text_rect)
+        screen.blit(total_graze_text, total_graze_text_rect)
 
         if player_one.clears > 0:
             clears = player_one.clears
@@ -385,6 +388,11 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         if 7200 <= phase_counter <= 7500:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FIVE", True, WHITE)
+                phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
+                screen.blit(phase_text, phase_text_rect)
+        if 10000 <= phase_counter <= 10300:
+            if phase_counter % 60 < 30:
+                phase_text = font.render("STAGE CLEAR", True, TURQUOISE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
 

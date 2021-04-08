@@ -8,6 +8,8 @@ import collectibles
 import movement
 from random import Random
 
+FPS = 60
+
 SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
@@ -23,11 +25,9 @@ vec = pygame.math.Vector2
 clear_icon = pygame.image.load("res/img/clear.png")
 life_icon = pygame.image.load("res/img/life.png")
 
-# handle returning pause differential
-
 
 def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
-             screen, font, clock, FPS, player_one, player_magic_circle,
+             screen, font, clock, points, player_one, player_magic_circle,
              lives, pause_differential):
     background = pygame.image.load("res/img/background7.png")
     best_time = time() - time()
@@ -37,7 +37,6 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     phase_counter = 0
     frame_counter = 0
     ticker = 0
-    points = 0
     best_points = 0
     death_loc = vec(0, 0)
     death = False
@@ -56,7 +55,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 stage = False
-                return 0
+                return 0, points, total_graze, player_one.clears, lives, pause_differential
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -75,7 +74,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     pause_differential += pause_end - pause_start
                     if not unpause:
                         stage = False
-                        return 0
+                        return 0, points, total_graze, player_one.clears, lives, pause_differential
                 if event.key == pygame.K_z:
                     if player_one.clears > 0:
                         player_one.clears -= 1
@@ -255,7 +254,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         if phase_counter > 10000:
             magic_circle.fast = False
             stage = False
-            return 1
+            return 1, points, total_graze, player_one.clears, lives, pause_differential
 
     # HANDLE PLAYER
 

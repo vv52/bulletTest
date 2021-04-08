@@ -1,29 +1,11 @@
 import pygame
 from pygame.locals import *
-from pygame.math import Vector2
-from random import Random
-from time import time
-from datetime import datetime, timedelta
-import player
-import stage_one
-import stage_two
-import yukari
 import controls
-import sys
 
 FPS = 60
 
 SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-TURQUOISE = (0, 255, 255)
-
-FAST = 5
-SLOW = 2.5
-
-vec = pygame.math.Vector2
 
 
 def TitleScreen(clock, screen):

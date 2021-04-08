@@ -9,6 +9,7 @@ import stage_one
 import stage_two
 import yukari
 import title
+import results
 import sys
 
 FPS = 60
@@ -59,6 +60,13 @@ def main():
     bosses.add(boss)
 
     lives = 2
+    total_points = 0
+    total_graze = 0
+    total_gems = 0
+    stage_clears = 0
+    stage_points = 0
+    stage_graze = 0
+    stage_gems = 0
 
     stage_times = []
     total_time = time() - time()
@@ -70,36 +78,47 @@ def main():
             if event.type == pygame.QUIT:  # Handle window exit gracefully
                 running = False
 
-        # TITLE
+    # TITLE
 
-            title_check = title.TitleScreen(clock, screen)
-            if not title_check:
-                running = False
-                break
+        title_check = title.TitleScreen(clock, screen)
+        if not title_check:
+            running = False
+            break
 
-        # STAGE ONE
+    # STAGE ONE
 
-            start_time = time()
-            pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, orbs,
-                                            screen, font, clock, FPS, player_one, player_magic_circle,
-                                            lives, pause_differential)
-            end_time = time()
-            stage_times.append(end_time - start_time)
-            if not pass_stage:
-                running = False
-                break
+        start_time = time()
+        pass_stage, stage_points, stage_graze, stage_gems, stage_clears,\
+            lives, pause_differential = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
+                                                           orbs, screen, font, clock, total_points, player_one,
+                                                           player_magic_circle, lives, pause_differential)
+        end_time = time()
+        if not pass_stage:
+            running = False
+            break
+        stage_times.append(end_time - start_time - pause_differential)
+        total_points += stage_points
+        total_graze += stage_graze
 
-        # STAGE TWO
+    # STAGE ONE RESULTS
 
-            start_time = time()
-            pass_stage = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
-                                            screen, font, clock, FPS, player_one, player_magic_circle,
-                                            lives, pause_differential)
-            end_time = time()
-            stage_times.append(end_time - start_time)
-            if not pass_stage:
-                running = False
-                break
+        results_check = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
+                                            total_graze, stage_gems, lives, stage_clears, pass_stage, "STAGE ONE")
+
+    # STAGE TWO
+
+        start_time = time()
+        pass_stage, stage_points, stage_graze, stage_clears, \
+        lives, pause_differential = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
+                                                       orbs, screen, font, clock, total_points, player_one,
+                                                       player_magic_circle, lives, pause_differential)
+        end_time = time()
+        if not pass_stage:
+            running = False
+            break
+        stage_times.append(end_time - start_time - pause_differential)
+        total_points += stage_points
+        total_graze += stage_graze
 
     pygame.display.quit()                           # More graceful exit handling
     pygame.mixer.quit()
