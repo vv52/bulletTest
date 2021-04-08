@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import player
 import attacks
 import pause
+import collectibles
 from random import Random
 
 SCREEN_WIDTH = 512
@@ -19,8 +20,10 @@ SLOW = 2.5
 
 vec = pygame.math.Vector2
 
+# handle returning pause differential
 
-def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
+
+def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
              screen, font, clock, FPS, player_one, player_magic_circle):
     background = pygame.image.load("res/img/background6.png")
     best_time = time() - time()
@@ -65,6 +68,12 @@ def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
                     if not unpause:
                         stage = False
                         return 0
+                if event.key == pygame.K_z:
+                    for bullet in bullets:
+                        new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
+                        sprites.add(new_orb)
+                        orbs.add(new_orb)
+                        bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     player_one.up = False
@@ -246,6 +255,17 @@ def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
         player_one.move()
         player_magic_circle.rect.center = player_one.rect.center
 
+        for orb in orbs:
+            if orb.pos != player_one.pos:
+                if player_one.pos.x - orb.pos.x > 400 or player_one.pos.y - orb.pos.y > 400:
+                    orb.pos += (player_one.pos - orb.pos) / 32
+                elif player_one.pos.x - orb.pos.x > 200 or player_one.pos.y - orb.pos.y > 200:
+                    orb.pos += (player_one.pos - orb.pos) / 16
+                elif player_one.pos.x - orb.pos.x > 100 or player_one.pos.y - orb.pos.y > 100:
+                        orb.pos += (player_one.pos - orb.pos) / 8
+                else:
+                    orb.pos += (player_one.pos - orb.pos) / 4
+
         for bullet in bullets:
             player_one_hit = pygame.sprite.collide_mask(player_one, bullet)
             if player_one_hit:
@@ -291,6 +311,11 @@ def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
                 graze_counter = 0
         last_graze_hit = player_one.grazing
 
+        orb_hits = pygame.sprite.spritecollide(player_one, orbs, True)
+        if orb_hits:
+            for hit in orb_hits:
+                points += 5
+
         screen.blit(background, background.get_rect())
         for obj in sprites:
             obj.draw(screen)
@@ -308,25 +333,33 @@ def StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
                 death_counter = 1
                 death = False
 
-        current_time = time()
-        sec = timedelta(seconds=int(current_time - start_time - pause_differential))
-        sec2 = timedelta(seconds=int(best_time))
-        d = datetime(1, 1, 1) + sec
-        dd = datetime(1, 1, 1) + sec2
-        time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, WHITE)
-        time_text_rect = time_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
-        best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, WHITE)
-        best_text_rect = best_text.get_rect(center=(80, 40))
+        #current_time = time()
+        #sec = timedelta(seconds=int(current_time - start_time - pause_differential))
+        #sec2 = timedelta(seconds=int(best_time))
+        #d = datetime(1, 1, 1) + sec
+        #dd = datetime(1, 1, 1) + sec2
+        #time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, WHITE)
+        #time_text_rect = time_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
+        #best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, WHITE)
+        #best_text_rect = best_text.get_rect(center=(80, 40))
+        #points_text = font.render(f"{points}", True, WHITE)
+        #points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
+        #best_points_text = font.render(f"{best_points}", True, WHITE)
+        #est_points_text_rect = best_points_text.get_rect(center=(80, 60))
+        #graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
+        #graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 80))
+        #best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
+        #best_graze_text_rect = best_graze_text.get_rect(center=(80, 80))
+        #screen.blit(time_text, time_text_rect)
+        #screen.blit(best_text, best_text_rect)
         points_text = font.render(f"{points}", True, WHITE)
-        points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
+        points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
         best_points_text = font.render(f"{best_points}", True, WHITE)
-        best_points_text_rect = best_points_text.get_rect(center=(80, 60))
+        best_points_text_rect = best_points_text.get_rect(center=(80, 40))
         graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
-        graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 80))
+        graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
         best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
-        best_graze_text_rect = best_graze_text.get_rect(center=(80, 80))
-        screen.blit(time_text, time_text_rect)
-        screen.blit(best_text, best_text_rect)
+        best_graze_text_rect = best_graze_text.get_rect(center=(80, 60))
         screen.blit(points_text, points_text_rect)
         screen.blit(best_points_text, best_points_text_rect)
         screen.blit(graze_count_text, graze_count_text_rect)

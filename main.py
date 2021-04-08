@@ -5,7 +5,6 @@ from random import Random
 from time import time
 from datetime import datetime, timedelta
 import player
-import player_attacks
 import stage_one
 import stage_two
 import yukari
@@ -39,9 +38,9 @@ def main():
     sprites = pygame.sprite.Group()
     bullets = pygame.sprite.Group()
     players = pygame.sprite.Group()
-    p_attacks = pygame.sprite.Group()
     bosses = pygame.sprite.Group()
     circles = pygame.sprite.Group()
+    orbs = pygame.sprite.Group()
 
     player_one = player.Player(256, 660)
     sprites.add(player_one)
@@ -57,6 +56,9 @@ def main():
     boss = yukari.Yukari(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
     sprites.add(boss)
     bosses.add(boss)
+
+    stage_times = []
+    total_time = time() - time()
 
     running = True
     while running:
@@ -86,21 +88,23 @@ def main():
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = FAST
 
-        #start_time = time()
-        #pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
-        #                                screen, font, clock, FPS, player_one, player_magic_circle)
-        #end_time = time()
-        #stage_one_time = end_time - start_time
-        #if not pass_stage:
-        #    running = False
+            #start_time = time()
+            #pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, orbs,
+            #                                screen, font, clock, FPS, player_one, player_magic_circle)
+            #end_time = time()
+            #stage_times.append(end_time - start_time)
+            #if not pass_stage:
+            #    running = False
+            #    break
 
-        start_time = time()
-        pass_stage = stage_two.StageOne(boss, magic_circle, bullets, sprites, players, p_attacks,
-                                        screen, font, clock, FPS, player_one, player_magic_circle)
-        end_time = time()
-        stage_one_time = end_time - start_time
-        if not pass_stage:
-            running = False
+            start_time = time()
+            pass_stage = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
+                                            screen, font, clock, FPS, player_one, player_magic_circle)
+            end_time = time()
+            stage_times.append(end_time - start_time)
+            if not pass_stage:
+                running = False
+                break
 
     pygame.display.quit()                           # More graceful exit handling
     pygame.mixer.quit()
