@@ -48,6 +48,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     total_graze = 0
     extend_10k = False
     extend_20k = False
+    inv_text = font.render("INVINCIBLE", True, WHITE)
+    inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
 
     stage = True
     while stage:
@@ -358,8 +360,6 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
         best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
         best_graze_text_rect = best_graze_text.get_rect(center=(80, 60))
-        inv_text = font.render("INVINCIBLE", True, WHITE)
-        inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
 
         screen.blit(points_text, points_text_rect)
         screen.blit(best_points_text, best_points_text_rect)
