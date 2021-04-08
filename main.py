@@ -57,49 +57,32 @@ def main():
     sprites.add(boss)
     bosses.add(boss)
 
+    lives = 2
+
     stage_times = []
     total_time = time() - time()
+    pause_differential = time() - time()
 
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Handle window exit gracefully
                 running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    player_one.up = True
-                if event.key == pygame.K_DOWN:
-                    player_one.down = True
-                if event.key == pygame.K_LEFT:
-                    player_one.left = True
-                if event.key == pygame.K_RIGHT:
-                    player_one.right = True
-                if event.key == pygame.K_LSHIFT:
-                    player_one.speed = SLOW
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_UP:
-                    player_one.up = False
-                if event.key == pygame.K_DOWN:
-                    player_one.down = False
-                if event.key == pygame.K_LEFT:
-                    player_one.left = False
-                if event.key == pygame.K_RIGHT:
-                    player_one.right = False
-                if event.key == pygame.K_LSHIFT:
-                    player_one.speed = FAST
 
-            #start_time = time()
-            #pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, orbs,
-            #                                screen, font, clock, FPS, player_one, player_magic_circle)
-            #end_time = time()
-            #stage_times.append(end_time - start_time)
-            #if not pass_stage:
-            #    running = False
-            #    break
+            start_time = time()
+            pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, orbs,
+                                            screen, font, clock, FPS, player_one, player_magic_circle,
+                                            lives, pause_differential)
+            end_time = time()
+            stage_times.append(end_time - start_time)
+            if not pass_stage:
+                running = False
+                break
 
             start_time = time()
             pass_stage = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
-                                            screen, font, clock, FPS, player_one, player_magic_circle)
+                                            screen, font, clock, FPS, player_one, player_magic_circle,
+                                            lives, pause_differential)
             end_time = time()
             stage_times.append(end_time - start_time)
             if not pass_stage:

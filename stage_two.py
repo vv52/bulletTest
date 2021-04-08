@@ -20,14 +20,19 @@ SLOW = 2.5
 
 vec = pygame.math.Vector2
 
+clear_icon = pygame.image.load("res/img/clear.png")
+life_icon = pygame.image.load("res/img/life.png")
+
+# handle returning pause differential
+
 
 def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
-             screen, font, clock, FPS, player_one, player_magic_circle):
+             screen, font, clock, FPS, player_one, player_magic_circle,
+             lives, pause_differential):
     background = pygame.image.load("res/img/background7.png")
     best_time = time() - time()
     current_time = time() - time()
     start_time = time()
-    pause_differential = time() - time()
     rand = Random()
     phase_counter = 0
     frame_counter = 0
@@ -40,6 +45,9 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     graze_counter = 0
     best_graze = 0
     last_graze_hit = False
+    total_graze = 0
+    extend_10k = False
+    extend_20k = False
 
     stage = True
     while stage:
@@ -62,16 +70,18 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     pause_start = time()
                     unpause = pause.PauseGame(font, screen)
                     pause_end = time()
-                    pause_differential = pause_end - pause_start
+                    pause_differential += pause_end - pause_start
                     if not unpause:
                         stage = False
                         return 0
                 if event.key == pygame.K_z:
-                    for bullet in bullets:
-                        new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
-                        sprites.add(new_orb)
-                        orbs.add(new_orb)
-                        bullet.kill()
+                    if player_one.clears > 0:
+                        player_one.clears -= 1
+                        for bullet in bullets:
+                            new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
+                            sprites.add(new_orb)
+                            orbs.add(new_orb)
+                            bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     player_one.up = False
@@ -280,7 +290,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 elif player_one.pos.x - orb.pos.x > 200 or player_one.pos.y - orb.pos.y > 200:
                     orb.pos += (player_one.pos - orb.pos) / 16
                 elif player_one.pos.x - orb.pos.x > 100 or player_one.pos.y - orb.pos.y > 100:
-                        orb.pos += (player_one.pos - orb.pos) / 8
+                    orb.pos += (player_one.pos - orb.pos) / 8
                 else:
                     orb.pos += (player_one.pos - orb.pos) / 4
 
@@ -292,16 +302,23 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 player_one.kill()
                 for obj in bullets:
                     obj.kill()
-                if current_time - start_time > best_time:
-                    best_time = current_time - start_time
-                if points > best_points:
-                    best_points = points
-                current_time = time() - time()
-                points = 0
-                start_time = time()
-                frame_counter = 0
-                phase_counter = 0
-                ticker = 0
+                total_graze = 0
+                if lives == 0:
+                    if current_time - start_time > best_time:
+                        best_time = current_time - start_time
+                    if points > best_points:
+                        best_points = points
+                    current_time = time() - time()
+                    start_time = time()
+                    points = 0
+                    frame_counter = 0
+                    phase_counter = 0
+                    ticker = 0
+                    lives = 2
+                    extend_10k = False
+                    extend_20k = False
+                else:
+                    lives -= 1
                 player_one = player.Player(256, 660)
                 sprites.add(player_one)
                 players.add(player_one)
@@ -320,6 +337,9 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             player_one.grazing = True
             if last_graze_hit:
                 graze_counter += 1
+                total_graze += 1
+                if total_graze != 0 and total_graze % 1000 == 0 and player_one.clears < 5:
+                    player_one.clears += 1
         else:
             player_magic_circle.fast = False
             player_one.grazing = False
@@ -351,25 +371,25 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 death_counter = 1
                 death = False
 
-        #current_time = time()
-        #sec = timedelta(seconds=int(current_time - start_time - pause_differential))
-        #sec2 = timedelta(seconds=int(best_time))
-        #d = datetime(1, 1, 1) + sec
-        #dd = datetime(1, 1, 1) + sec2
-        #time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, WHITE)
-        #time_text_rect = time_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
-        #best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, WHITE)
-        #best_text_rect = best_text.get_rect(center=(80, 40))
-        #points_text = font.render(f"{points}", True, WHITE)
-        #points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
-        #best_points_text = font.render(f"{best_points}", True, WHITE)
-        #best_points_text_rect = best_points_text.get_rect(center=(80, 60))
-        #graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
-        #graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 80))
-        #best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
-        #best_graze_text_rect = best_graze_text.get_rect(center=(80, 80))
-        #screen.blit(time_text, time_text_rect)
-        #screen.blit(best_text, best_text_rect)
+        # current_time = time()
+        # sec = timedelta(seconds=int(current_time - start_time - pause_differential))
+        # sec2 = timedelta(seconds=int(best_time))
+        # d = datetime(1, 1, 1) + sec
+        # dd = datetime(1, 1, 1) + sec2
+        # time_text = font.render(f"%d:%d:%d" % (d.hour, d.minute, d.second), True, WHITE)
+        # time_text_rect = time_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
+        # best_text = font.render(f"%d:%d:%d" % (dd.hour, dd.minute, dd.second), True, WHITE)
+        # best_text_rect = best_text.get_rect(center=(80, 40))
+        # points_text = font.render(f"{points}", True, WHITE)
+        # points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
+        # best_points_text = font.render(f"{best_points}", True, WHITE)
+        # est_points_text_rect = best_points_text.get_rect(center=(80, 60))
+        # graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
+        # graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 80))
+        # best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
+        # best_graze_text_rect = best_graze_text.get_rect(center=(80, 80))
+        # screen.blit(time_text, time_text_rect)
+        # screen.blit(best_text, best_text_rect)
         points_text = font.render(f"{points}", True, WHITE)
         points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
         best_points_text = font.render(f"{best_points}", True, WHITE)
@@ -382,6 +402,19 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         screen.blit(best_points_text, best_points_text_rect)
         screen.blit(graze_count_text, graze_count_text_rect)
         screen.blit(best_graze_text, best_graze_text_rect)
+
+        if player_one.clears > 0:
+            clears = player_one.clears
+            while clears > 0:
+                screen.blit(clear_icon, clear_icon.get_rect(center=((40 * clears), SCREEN_HEIGHT - 40)))
+                clears -= 1
+
+        if lives > 0:
+            lives_index = lives
+            while lives_index > 0:
+                screen.blit(life_icon,
+                            life_icon.get_rect(center=((SCREEN_WIDTH - (40 * lives_index)), SCREEN_HEIGHT - 40)))
+                lives_index -= 1
 
         if phase_counter <= 300:
             if phase_counter % 60 < 30:
@@ -422,3 +455,11 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 points += 2
         else:
             points += 1
+        if points > 10000 and not extend_10k:
+            extend_10k = True
+            if lives < 3:
+                lives += 1
+        if points > 20000 and not extend_20k:
+            extend_20k = True
+            if lives < 3:
+                lives += 1

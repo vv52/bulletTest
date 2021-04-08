@@ -24,6 +24,7 @@ class Player(sprite.Sprite):
         self.left = False
         self.right = False
         self.grazing = False
+        self.clears = 2
 
     def update(self):
         if self.left:
