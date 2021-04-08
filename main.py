@@ -8,6 +8,7 @@ import player
 import stage_one
 import stage_two
 import yukari
+import title
 import sys
 
 FPS = 60
@@ -68,6 +69,11 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Handle window exit gracefully
                 running = False
+
+            title_check = title.TitleScreen(clock, screen)
+            if not title_check:
+                running = False
+                break
 
             start_time = time()
             pass_stage = stage_one.StageOne(boss, magic_circle, bullets, sprites, players, orbs,
