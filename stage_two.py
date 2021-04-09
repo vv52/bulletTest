@@ -51,9 +51,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     extend_20k = False
     inv_text = font.render("INVINCIBLE", True, WHITE)
     inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
-    warning_font = pygame.font.Font("res/misc/Symtext.ttf", 60)
-    warning_text = warning_font.render("!!", True, YELLOW)
-    warning_text_rect = warning_text.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)))
+    warning_image = pygame.image.load("res/img/warning.png")
+    warning_image_rect = warning_image.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)))
 
     stage = True
     while stage:
@@ -427,7 +426,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 screen.blit(phase_text, phase_text_rect)
             if phase_counter % 80 < 50:
                 if phase_counter % 10 < 5:
-                    screen.blit(warning_text, warning_text_rect)
+                    screen.blit(warning_image, warning_image_rect)
         if 5940 <= phase_counter <= 6240:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FOUR", True, WHITE)
@@ -435,7 +434,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 screen.blit(phase_text, phase_text_rect)
             if phase_counter % 80 < 50:
                 if phase_counter % 10 < 5:
-                    screen.blit(warning_text, warning_text_rect)
+                    screen.blit(warning_image, warning_image_rect)
         if 8200 <= phase_counter <= 8500:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FIVE", True, WHITE)
