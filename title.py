@@ -34,6 +34,8 @@ def TitleScreen(clock, screen):
                     menu_down = True
                 if event.key == pygame.K_RETURN:
                     menu_select = True
+                if event.key == pygame.K_z:
+                    menu_select = True
 
         if menu_up:
             if state > 0:
