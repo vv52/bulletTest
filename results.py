@@ -35,26 +35,25 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze,
 
     stage_name_text_rect = stage_name_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET))
     pass_stage_text_rect = pass_stage_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET + 40))
-    stage_points_text_rect = stage_points_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 3))
-    total_points_text_rect = total_points_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 3 + 40))
-    stage_graze_text_rect = stage_graze_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 4 + 40))
-    total_graze_text_rect = total_graze_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 4 + 80))
-    lives_text_rect = lives_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 80))
-    clears_text_rect = clears_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 120))
+    stage_points_text_rect = stage_points_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 3 - 40))
+    total_points_text_rect = total_points_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 3))
+    stage_graze_text_rect = stage_graze_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 4))
+    total_graze_text_rect = total_graze_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 4 + 40))
+    lives_text_rect = lives_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 40))
+    clears_text_rect = clears_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 80))
     stage_gems_text_rect = stage_gems_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - OFFSET))
 
-    running = True
-    while running:
+    results_screen = True
+    while results_screen:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                results_screen = False
                 return 0
             if event.type == pygame.KEYDOWN:
-                running = False
+                print("ok")
+                results_screen = False
                 return 1
-
         screen.blit(background, background.get_rect())
-
         screen.blit(stage_name_text, stage_name_text_rect)
         screen.blit(pass_stage_text, pass_stage_text_rect)
         screen.blit(stage_points_text, stage_points_text_rect)
@@ -64,6 +63,4 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze,
         screen.blit(lives_text, lives_text_rect)
         screen.blit(clears_text, clears_text_rect)
         screen.blit(stage_gems_text, stage_gems_text_rect)
-
         pygame.display.flip()
-        clock.tick(FPS)

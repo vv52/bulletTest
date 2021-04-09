@@ -26,13 +26,15 @@ SLOW = 2.5
 
 vec = pygame.math.Vector2
 
+running = True
+
 
 def main():
     pygame.init()
     pygame.mixer.init()
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),
-                                     pygame.HWSURFACE | pygame.DOUBLEBUF, vsync=1)
+                                     pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.SCALED, vsync=1)
     pygame.display.set_caption("Touhou: Destitute Dreamscape (alpha demo)")
 
     font = pygame.font.Font("res/misc/Symtext.ttf", 24)
@@ -72,6 +74,7 @@ def main():
     total_time = time() - time()
     pause_differential = time() - time()
 
+    global running
     running = True
     while running:
         for event in pygame.event.get():
@@ -80,45 +83,59 @@ def main():
 
     # TITLE
 
-        title_check = title.TitleScreen(clock, screen)
-        if not title_check:
+        continue_game = title.TitleScreen(clock, screen)
+        if not continue_game:
             running = False
             break
 
     # STAGE ONE
 
         start_time = time()
-        pass_stage, stage_points, stage_graze, stage_gems, stage_clears,\
-            lives, pause_differential = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
-                                                           orbs, screen, font, clock, total_points, player_one,
-                                                           player_magic_circle, lives, pause_differential)
+        continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives,\
+            pause_differential, player_one = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
+                                                                orbs, screen, font, clock, total_points, player_one,
+                                                                player_magic_circle, lives, pause_differential)
         end_time = time()
-        if not pass_stage:
+        if not continue_game:
             running = False
             break
         stage_times.append(end_time - start_time - pause_differential)
         total_points += stage_points
         total_graze += stage_graze
+        total_gems += stage_gems
 
     # STAGE ONE RESULTS
 
-        results_check = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
+        continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
                                             total_graze, stage_gems, lives, stage_clears, pass_stage, "STAGE ONE")
+        if not continue_game:
+            running = False
+            break
 
     # STAGE TWO
 
+        player_one.pos = vec(256, 660)
         start_time = time()
-        pass_stage, stage_points, stage_graze, stage_clears, \
-        lives, pause_differential = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
-                                                       orbs, screen, font, clock, total_points, player_one,
-                                                       player_magic_circle, lives, pause_differential)
+        continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives, \
+        pause_differential, player_one = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
+                                                            orbs, screen, font, clock, total_points, player_one,
+                                                            player_magic_circle, lives, pause_differential)
         end_time = time()
-        if not pass_stage:
+        if not continue_game:
             running = False
             break
         stage_times.append(end_time - start_time - pause_differential)
         total_points += stage_points
         total_graze += stage_graze
+        total_gems += stage_gems
+
+    # STAGE TWO RESULTS
+
+        continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
+                                            total_graze, stage_gems, lives, stage_clears, pass_stage, "STAGE ONE")
+        if not continue_game:
+            running = False
+            break
 
     pygame.display.quit()                           # More graceful exit handling
     pygame.mixer.quit()

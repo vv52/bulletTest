@@ -20,11 +20,12 @@ def TitleScreen(clock, screen):
     controls_btn_rect = controls_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 56))
     exit_game_btn = pygame.image.load("res/img/exit_game_button.png")
     exit_game_btn_rect = exit_game_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
-    running = True
-    while running:
+
+    title_screen = True
+    while title_screen:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Handle window exit gracefully
-                running = False
+                title_screen = False
                 return 0
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:

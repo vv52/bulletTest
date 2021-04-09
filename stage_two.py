@@ -16,6 +16,7 @@ SCREEN_HEIGHT = 740
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 TURQUOISE = (0, 255, 255)
+YELLOW = (255, 255, 0)
 
 FAST = 5
 SLOW = 2.5
@@ -45,6 +46,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     best_graze = 0
     last_graze_hit = False
     total_graze = 0
+    total_gems = 0
     extend_10k = False
     extend_20k = False
     inv_text = font.render("INVINCIBLE", True, WHITE)
@@ -55,7 +57,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 stage = False
-                return 0, points, total_graze, player_one.clears, lives, pause_differential
+                return 0, points, total_graze, total_gems, player_one.clears,\
+                       False, lives, pause_differential, player_one
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -74,14 +77,16 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     pause_differential += pause_end - pause_start
                     if not unpause:
                         stage = False
-                        return 0, points, total_graze, player_one.clears, lives, pause_differential
-                if event.key == pygame.K_z:
+                        return 0, points, total_graze, total_gems, player_one.clears,\
+                               False, lives, pause_differential, player_one
+                if event.key == pygame.K_z and player_one.spawn_timer == 0:
                     if player_one.clears > 0:
                         player_one.clears -= 1
                         for bullet in bullets:
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
+                            total_gems += 1
                             bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
@@ -251,10 +256,10 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
 
     # END STAGE
 
-        if phase_counter > 10000:
+        if phase_counter > 10300:
             magic_circle.fast = False
             stage = False
-            return 1, points, total_graze, player_one.clears, lives, pause_differential
+            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one
 
     # HANDLE PLAYER
 
@@ -289,6 +294,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     current_time = time() - time()
                     start_time = time()
                     points = 0
+                    total_gems = 0
                     frame_counter = 0
                     phase_counter = 0
                     ticker = 0
@@ -332,7 +338,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             for hit in orb_hits:
                 points += 5
 
-    # DRAW TO SCREEN
+        # DRAW TO SCREEN
 
         screen.blit(background, background.get_rect())
         for obj in sprites:
@@ -353,17 +359,17 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
 
         points_text = font.render(f"{points}", True, WHITE)
         points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
-        best_points_text = font.render(f"{best_points}", True, WHITE)
-        best_points_text_rect = best_points_text.get_rect(center=(80, 40))
+        total_gems_text = font.render(f"{total_gems}", True, YELLOW)
+        total_gems_text_rect = total_gems_text.get_rect(center=(80, 40))
         graze_count_text = font.render(f"{graze_counter}", True, TURQUOISE)
         graze_count_text_rect = graze_count_text.get_rect(center=(SCREEN_WIDTH - 80, 60))
-        best_graze_text = font.render(f"{best_graze}", True, TURQUOISE)
-        best_graze_text_rect = best_graze_text.get_rect(center=(80, 60))
+        total_graze_text = font.render(f"{total_graze}", True, TURQUOISE)
+        total_graze_text_rect = total_graze_text.get_rect(center=(80, 60))
 
         screen.blit(points_text, points_text_rect)
-        screen.blit(best_points_text, best_points_text_rect)
+        screen.blit(total_gems_text, total_gems_text_rect)
         screen.blit(graze_count_text, graze_count_text_rect)
-        screen.blit(best_graze_text, best_graze_text_rect)
+        screen.blit(total_graze_text, total_graze_text_rect)
 
         if player_one.clears > 0:
             clears = player_one.clears
@@ -393,14 +399,19 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 phase_text = font.render("PHASE THREE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-        if 4940 <= phase_counter <= 5240:
+        if 5940 <= phase_counter <= 6240:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FOUR", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-        if 7200 <= phase_counter <= 7500:
+        if 8200 <= phase_counter <= 8500:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FIVE", True, WHITE)
+                phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
+                screen.blit(phase_text, phase_text_rect)
+        if 10000 <= phase_counter <= 10300:
+            if phase_counter % 60 < 30:
+                phase_text = font.render("STAGE CLEAR", True, TURQUOISE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
 
@@ -408,7 +419,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             if phase_counter % 20 < 10:
                 screen.blit(inv_text, inv_text_rect)
 
-    # FRAME UPKEEP
+        # FRAME UPKEEP
 
         pygame.display.flip()
         clock.tick(FPS)

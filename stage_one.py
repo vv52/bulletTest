@@ -57,7 +57,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 stage = False
-                return 0, points, total_graze, total_gems, player_one.clears, lives, pause_differential
+                return 0, points, total_graze, total_gems, player_one.clears,\
+                       False, lives, pause_differential, player_one
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -76,7 +77,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     pause_differential += pause_end - pause_start
                     if not unpause:
                         stage = False
-                        return 0, points, total_graze, total_gems, player_one.clears, lives, pause_differential
+                        return 0, points, total_graze, total_gems, player_one.clears,\
+                               False, lives, pause_differential, player_one
                 if event.key == pygame.K_z and player_one.spawn_timer == 0:
                     if player_one.clears > 0:
                         player_one.clears -= 1
@@ -209,7 +211,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
             if frame_counter == 60:
                 frame_counter = 0
 
-    # phase transition
+    # PHASE TRANSITION
 
         if 8020 < phase_counter < 8200:
             at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
@@ -241,7 +243,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         if phase_counter > 10300:
             magic_circle.fast = False
             stage = False
-            return 1, points, total_graze, total_gems, player_one.clears, lives, pause_differential
+            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one
 
     # HANDLE PLAYER
 
@@ -380,12 +382,12 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 phase_text = font.render("PHASE THREE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-        if 4940 <= phase_counter <= 5240:
+        if 5940 <= phase_counter <= 6240:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FOUR", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-        if 7200 <= phase_counter <= 7500:
+        if 8200 <= phase_counter <= 8500:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FIVE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
