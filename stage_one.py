@@ -76,6 +76,24 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     unpause = pause.PauseGame(font, screen)
                     pause_end = time()
                     pause_differential += pause_end - pause_start
+                    if unpause == 2:
+                        player_one.kill()
+                        for obj in bullets:
+                            obj.kill()
+                        total_graze = 0
+                        current_time = time() - time()
+                        start_time = time()
+                        points = 0
+                        total_gems = 0
+                        frame_counter = 0
+                        phase_counter = 0
+                        ticker = 0
+                        lives = 2
+                        extend_10k = False
+                        extend_20k = False
+                        player_one = player.Player(256, 660)
+                        sprites.add(player_one)
+                        players.add(player_one)
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears,\
@@ -278,7 +296,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                         best_points = points
                     current_time = time() - time()
                     start_time = time()
-                    points = 0
+                    points = original_points
                     total_gems = 0
                     frame_counter = 0
                     phase_counter = 0
@@ -291,7 +309,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 player_one = player.Player(256, 660)
                 sprites.add(player_one)
                 players.add(player_one)
-            if bullet.rect.x < 0:
+            if bullet.rect.x < -8:
                 bullet.kill()
             elif bullet.rect.x > SCREEN_WIDTH:
                 bullet.kill()

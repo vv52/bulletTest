@@ -50,7 +50,6 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze,
                 results_screen = False
                 return 0
             if event.type == pygame.KEYDOWN:
-                print("ok")
                 results_screen = False
                 return 1
         screen.blit(background, background.get_rect())

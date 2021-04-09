@@ -9,7 +9,7 @@ TURQUOISE = (0, 255, 255)
 
 
 def PauseGame(font, screen):
-    pause_text = font.render("PAUSE", True, WHITE)
+    pause_text = font.render("- [PAUSE] -", True, WHITE)
     pause_text_rect = pause_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
     continue_text = font.render("CONTINUE", True, WHITE)
     continue_text_rect = continue_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 300))
@@ -57,6 +57,7 @@ def PauseGame(font, screen):
                 paused = False
                 return 1
             if state == 1:
+                return 2
                 pass
             if state == 2:
                 pass
