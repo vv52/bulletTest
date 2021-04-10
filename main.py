@@ -32,6 +32,11 @@ running = True
 def main():
     pygame.init()
     pygame.mixer.init()
+    pygame.joystick.init()
+    joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+    for joystick in joysticks:
+        print(joystick.get_name())
+
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),
                                      pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.SCALED, vsync=1)
@@ -80,10 +85,16 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Handle window exit gracefully
                 running = False
+            if event.type == JOYDEVICEADDED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+                for joystick in joysticks:
+                    print(joystick.get_name())
+            if event.type == JOYDEVICEREMOVED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
     # TITLE
 
-        continue_game = title.TitleScreen(clock, screen)
+        continue_game = title.TitleScreen(clock, screen, joysticks)
         if not continue_game:
             running = False
             break
@@ -106,8 +117,8 @@ def main():
 
     # STAGE ONE RESULTS
 
-        continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
-                                            total_graze, stage_gems, lives, stage_clears, pass_stage, "STAGE ONE")
+        continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
+                                            stage_gems, lives, stage_clears, pass_stage, joysticks, "STAGE ONE")
         if not continue_game:
             running = False
             break
@@ -132,8 +143,8 @@ def main():
 
     # STAGE TWO RESULTS
 
-            continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
-                                            total_graze, stage_gems, lives, stage_clears, pass_stage, "STAGE ONE")
+            continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
+                                                stage_gems, lives, stage_clears, pass_stage, joysticks, "STAGE TWO")
             if not continue_game:
                 running = False
                 break

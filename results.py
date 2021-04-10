@@ -13,8 +13,8 @@ TURQUOISE = (0, 255, 255)
 RED = (255, 0, 0)
 
 
-def ShowResults(clock, screen, stage_points, total_points, stage_graze,
-                total_graze, stage_gems, lives, clears, pass_stage, stage_name):
+def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
+                stage_gems, lives, clears, pass_stage, joysticks, stage_name):
     background = pygame.image.load("res/img/results.png")
 
     name_font = pygame.font.Font("res/misc/Symtext.ttf", 40)
@@ -53,6 +53,16 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze,
                 if event.key == pygame.K_RETURN:
                     results_screen = False
                     return 1
+            if event.type == JOYBUTTONDOWN:
+                if event.button == 9:
+                    results_screen = False
+                    return 1
+            if event.type == JOYDEVICEADDED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+                for joystick in joysticks:
+                    print(joystick.get_name())
+            if event.type == JOYDEVICEREMOVED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
         screen.blit(background, background.get_rect())
         screen.blit(stage_name_text, stage_name_text_rect)
         screen.blit(pass_stage_text, pass_stage_text_rect)

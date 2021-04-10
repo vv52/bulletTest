@@ -48,7 +48,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     total_graze = 0
     total_gems = 0
     extend_10k = False
-    extend_20k = False
+    extend_25k = False
+    extend_50k = False
     inv_text = font.render("INVINCIBLE", True, WHITE)
     inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
     warning_image = pygame.image.load("res/img/warning.png")
@@ -90,7 +91,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                         ticker = 0
                         lives = 2
                         extend_10k = False
-                        extend_20k = False
+                        extend_25k = False
+                        extend_50k = False
                         player_one = player.Player(256, 660)
                         sprites.add(player_one)
                         players.add(player_one)
@@ -118,6 +120,72 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one.right = False
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = FAST
+            if event.type == JOYBUTTONDOWN:
+                if event.button == 1 and player_one.spawn_timer == 0:
+                    if player_one.clears > 0:
+                        player_one.clears -= 1
+                        for bullet in bullets:
+                            new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
+                            sprites.add(new_orb)
+                            orbs.add(new_orb)
+                            total_gems += 1
+                            bullet.kill()
+                if event.button == 7:
+                    player_one.speed = SLOW
+                if event.button == 9:
+                    pause_start = time()
+                    unpause = pause.PauseGame(font, screen)
+                    pause_end = time()
+                    pause_differential += pause_end - pause_start
+                    if unpause == 2:
+                        player_one.kill()
+                        for obj in bullets:
+                            obj.kill()
+                        total_graze = 0
+                        current_time = time() - time()
+                        start_time = time()
+                        points = 0
+                        total_gems = 0
+                        frame_counter = 0
+                        phase_counter = 0
+                        ticker = 0
+                        lives = 2
+                        extend_10k = False
+                        extend_25k = False
+                        extend_50k = False
+                        player_one = player.Player(256, 660)
+                        sprites.add(player_one)
+                        players.add(player_one)
+                    if not unpause:
+                        stage = False
+                        return 0, points, total_graze, total_gems, player_one.clears, \
+                               False, lives, pause_differential, player_one
+            if event.type == JOYBUTTONUP:
+                if event.button == 7:
+                    player_one.speed = FAST
+            if event.type == JOYAXISMOTION:
+                if event.axis == 4:
+                    if event.value < 0:
+                        player_one.up = True
+                    elif event.value > 0:
+                        player_one.down = True
+                    elif event.value == 0:
+                        player_one.up = False
+                        player_one.down = False
+                if event.axis == 3:
+                    if event.value < 0:
+                        player_one.left = True
+                    elif event.value > 0:
+                        player_one.right = True
+                    elif event.value == 0:
+                        player_one.left = False
+                        player_one.right = False
+            if event.type == JOYDEVICEADDED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+                for joystick in joysticks:
+                    print(joystick.get_name())
+            if event.type == JOYDEVICEREMOVED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
     # PHASE TRANSITION / RESET
 
@@ -448,7 +516,11 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
             extend_10k = True
             if lives < 3:
                 lives += 1
-        if points > 20000 and not extend_20k:
-            extend_20k = True
+        if points > 25000 and not extend_25k:
+            extend_25k = True
+            if lives < 3:
+                lives += 1
+        if points > 50000 and not extend_50k:
+            extend_50k = True
             if lives < 3:
                 lives += 1

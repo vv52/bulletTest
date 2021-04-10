@@ -8,7 +8,7 @@ WHITE = (255, 255, 255)
 TURQUOISE = (0, 255, 255)
 
 
-def PauseGame(font, screen):
+def PauseGame(font, screen, joysticks):
     pause_text = font.render("- [PAUSE] -", True, WHITE)
     pause_text_rect = pause_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
     continue_text = font.render("CONTINUE", True, WHITE)
@@ -45,6 +45,24 @@ def PauseGame(font, screen):
                     menu_select = True
                 if event.key == pygame.K_z:
                     menu_select = True
+            if event.type == JOYBUTTONDOWN:
+                if event.button == 9:
+                    paused = False
+                    return 1
+                if event.button == 1:
+                    menu_select = True
+            if event.type == JOYAXISMOTION:
+                if event.axis == 4:
+                    if event.value < 0:
+                        menu_up = True
+                    elif event.value > 0:
+                        menu_down = True
+            if event.type == JOYDEVICEADDED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+                for joystick in joysticks:
+                    print(joystick.get_name())
+            if event.type == JOYDEVICEREMOVED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
         if menu_up:
             if state > 0:

@@ -8,7 +8,7 @@ SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
 
-def TitleScreen(clock, screen):
+def TitleScreen(clock, screen, joysticks):
     background = pygame.image.load("res/img/menu.png")
     menu_up = False
     menu_down = False
@@ -36,6 +36,20 @@ def TitleScreen(clock, screen):
                     menu_select = True
                 if event.key == pygame.K_z:
                     menu_select = True
+            if event.type == JOYBUTTONDOWN:
+                menu_select = True
+            if event.type == JOYAXISMOTION:
+                if event.axis == 4:
+                    if event.value < 0:
+                        menu_up = True
+                    elif event.value > 0:
+                        menu_down = True
+            if event.type == JOYDEVICEADDED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+                for joystick in joysticks:
+                    print(joystick.get_name())
+            if event.type == JOYDEVICEREMOVED:
+                joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
         if menu_up:
             if state > 0:
@@ -47,7 +61,7 @@ def TitleScreen(clock, screen):
             if state == 0:
                 return 1
             if state == 1:
-                controls.ShowControls(clock, screen)
+                controls.ShowControls(clock, screen, joysticks)
             if state == 2:
                 return 0
 
