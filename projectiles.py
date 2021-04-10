@@ -51,7 +51,7 @@ class Bullet2(BulletSprite):
 
 class WarblyBullet(BulletSprite):
     def __init__(self, spawn_x, spawn_y, angle):
-        super().__init__("res/img/warbly_bullet2.png", spawn_x, spawn_y, angle)
+        super().__init__("res/img/warbly_bullet.png", spawn_x, spawn_y, angle)
         self.mask = pygame.mask.from_surface(pygame.image.load("res/img/bullet_collide.png"))
         self.velocity = Vector2(1, 0).rotate(angle) * 1.5
         self.pos = Vector2(self.rect.center)

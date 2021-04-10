@@ -290,20 +290,9 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     obj.kill()
                 total_graze = 0
                 if lives == 0:
-                    if current_time - start_time > best_time:
-                        best_time = current_time - start_time
-                    if points > best_points:
-                        best_points = points
-                    current_time = time() - time()
-                    start_time = time()
-                    points = original_points
-                    total_gems = 0
-                    frame_counter = 0
-                    phase_counter = 0
-                    ticker = 0
-                    lives = 2
-                    extend_10k = False
-                    extend_20k = False
+                    stage = False
+                    return 1, points, total_graze, total_gems, player_one.clears,\
+                           False, lives, pause_differential, player_one
                 else:
                     lives -= 1
                 player_one = player.Player(256, 660)

@@ -15,7 +15,7 @@ RED = (255, 0, 0)
 
 def ShowResults(clock, screen, stage_points, total_points, stage_graze,
                 total_graze, stage_gems, lives, clears, pass_stage, stage_name):
-    background = pygame.image.load("res/img/results.png")
+    background = pygame.image.load("res/img/results2.png")
 
     name_font = pygame.font.Font("res/misc/Symtext.ttf", 40)
     font = pygame.font.Font("res/misc/simsunb.ttf", 40)
@@ -50,8 +50,9 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze,
                 results_screen = False
                 return 0
             if event.type == pygame.KEYDOWN:
-                results_screen = False
-                return 1
+                if event.key == pygame.K_RETURN:
+                    results_screen = False
+                    return 1
         screen.blit(background, background.get_rect())
         screen.blit(stage_name_text, stage_name_text_rect)
         screen.blit(pass_stage_text, pass_stage_text_rect)

@@ -35,7 +35,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 3700
+    phase_counter = 0
     frame_counter = 0
     ticker = 0
     best_points = 0
@@ -191,8 +191,6 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             if frame_counter % 100 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8),
                                       ticker / 5, "s4i", ticker * 2, bullets, sprites)
-            #if frame_counter % 300 == 0:
-            #    attacks.BarSpawner(32, 20, 90, "w", bullets, sprites)
             if frame_counter == 600:
                 frame_counter = 0
 
@@ -217,21 +215,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             if frame_counter % 100 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
                                       ticker / 5, "s4i", ticker * 2, bullets, sprites)
-            #if frame_counter % 300 == 0:
-            #    attacks.BarSpawner(32, 20, 90, "w", bullets, sprites)
             if frame_counter == 600:
                 frame_counter = 0
-    #        magic_circle.fast = False
-    #        if frame_counter % 60 == 0:
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8),
-    #                          50, "b", rand.randint(45, 135), bullets, sprites)
-    #        if frame_counter % 200 == 0:
-    #            attacks.BarSpawner(SCREEN_HEIGHT / 8, 20, 90, "w", bullets, sprites)
-    #        if frame_counter % 300 == 0:
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-    #                          25, "s", rand.randint(0, 360), bullets, sprites)
-    #        if frame_counter == 600 == 0:
-    #            frame_counter = 0
 
     # PHASE TRANSITION
 
@@ -312,20 +297,9 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     obj.kill()
                 total_graze = 0
                 if lives == 0:
-                    if current_time - start_time > best_time:
-                        best_time = current_time - start_time
-                    if points > best_points:
-                        best_points = points
-                    current_time = time() - time()
-                    start_time = time()
-                    points = 0
-                    total_gems = 0
-                    frame_counter = 0
-                    phase_counter = 0
-                    ticker = 0
-                    lives = 2
-                    extend_10k = False
-                    extend_20k = False
+                    stage = False
+                    return 1, points, total_graze, total_gems, player_one.clears,\
+                        False, lives, pause_differential, player_one
                 else:
                     lives -= 1
                 player_one = player.Player(256, 660)

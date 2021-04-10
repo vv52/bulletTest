@@ -114,28 +114,47 @@ def main():
 
     # STAGE TWO
 
-        player_one.pos = vec(256, 660)
-        start_time = time()
-        continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives,\
-            pause_differential, player_one = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
-                                                            orbs, screen, font, clock, total_points, player_one,
-                                                            player_magic_circle, lives, pause_differential)
-        end_time = time()
-        if not continue_game:
-            running = False
-            break
-        stage_times.append(end_time - start_time - pause_differential)
-        total_points += stage_points
-        total_graze += stage_graze
-        total_gems += stage_gems
+        if pass_stage:
+            player_one.pos = vec(256, 660)
+            start_time = time()
+            continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives,\
+                pause_differential, player_one = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
+                                                                orbs, screen, font, clock, total_points, player_one,
+                                                                player_magic_circle, lives, pause_differential)
+            end_time = time()
+            if not continue_game:
+                running = False
+                break
+            stage_times.append(end_time - start_time - pause_differential)
+            total_points += stage_points
+            total_graze += stage_graze
+            total_gems += stage_gems
 
     # STAGE TWO RESULTS
 
-        continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
+            continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
                                             total_graze, stage_gems, lives, stage_clears, pass_stage, "STAGE ONE")
-        if not continue_game:
-            running = False
-            break
+            if not continue_game:
+                running = False
+                break
+
+    # RESET ON FAIL
+
+        if not pass_stage:
+            player_one = player.Player(256, 660)
+            sprites.add(player_one)
+            players.add(player_one)
+            lives = 2
+            total_points = 0
+            total_graze = 0
+            total_gems = 0
+            stage_clears = 0
+            stage_points = 0
+            stage_graze = 0
+            stage_gems = 0
+            stage_times = []
+            total_time = time() - time()
+            pause_differential = time() - time()
 
     pygame.display.quit()                           # More graceful exit handling
     pygame.mixer.quit()
