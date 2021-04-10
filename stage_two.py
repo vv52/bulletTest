@@ -72,7 +72,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one.right = True
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = SLOW
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
                     pause_start = time()
                     unpause = pause.PauseGame(font, screen)
                     pause_end = time()
@@ -249,22 +249,29 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             for bullet in bullets:
                 bullet.kill()
 
-# CHANGE EVERYTHING BELOW HERE
-
     # PHASE FIVE
 
         if 8200 <= phase_counter <= 10000:
             magic_circle.fast = False
-            if frame_counter % 30 == 0:
+            if frame_counter % 10 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-                                      5, "b2", rand.randint(45, 135), bullets, sprites)
-            if frame_counter % 90 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, 8),
-                                      40, "s3", rand.randint(0, 360), bullets, sprites)
-            if frame_counter % 120 == 0:
-                attacks.BarSpawner(SCREEN_HEIGHT - 8, 20, 270, "w", bullets, sprites)
+                                      5, "b", rand.randint(0, 360), bullets, sprites)
+            if frame_counter % 100 == 0:
+                if phase_counter < 9100:
+                    attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                                      40, "s4i", rand.randint(0, 360), bullets, sprites)
+                else:
+                    attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                                          40, "s4", rand.randint(0, 360), bullets, sprites)
+            if frame_counter % 500 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                                      20, "w", rand.randint(0, 360), bullets, sprites)
 
     # END STAGE
+
+        if phase_counter == 10000:
+            for bullet in bullets:
+                bullet.kill()
 
         if phase_counter > 10300:
             magic_circle.fast = False
@@ -365,7 +372,11 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         total_graze_text = font.render(f"{total_graze}", True, TURQUOISE)
         total_graze_text_rect = total_graze_text.get_rect(center=(80, 60))
 
-        screen.blit(points_text, points_text_rect)
+        if phase_counter < 10000:
+            screen.blit(points_text, points_text_rect)
+        else:
+            if phase_counter % 10 < 5:
+                screen.blit(points_text, points_text_rect)
         screen.blit(total_gems_text, total_gems_text_rect)
         screen.blit(graze_count_text, graze_count_text_rect)
         screen.blit(total_graze_text, total_graze_text_rect)
@@ -393,6 +404,10 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 phase_text = font.render("PHASE TWO", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
+        if 3860 <= phase_counter < 3960:
+            if phase_counter % 80 < 50:
+                if phase_counter % 10 < 5:
+                    screen.blit(warning_image, warning_image_rect)
         if 3960 <= phase_counter <= 4260:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE THREE", True, WHITE)
@@ -430,15 +445,16 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         clock.tick(FPS)
         frame_counter += 1
         phase_counter += 1
-        if player_one.grazing:
-            if 1000 <= graze_counter < 2500:
-                points += 3
-            elif graze_counter > 2500:
-                points += 4
+        if phase_counter < 10000:
+            if player_one.grazing:
+                if 1000 <= graze_counter < 2500:
+                    points += 3
+                elif graze_counter > 2500:
+                    points += 4
+                else:
+                    points += 2
             else:
-                points += 2
-        else:
-            points += 1
+                points += 1
         if points > 10000 and not extend_10k:
             extend_10k = True
             if lives < 3:

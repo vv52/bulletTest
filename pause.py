@@ -34,7 +34,7 @@ def PauseGame(font, screen):
                 paused = False
                 return 0
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
                     paused = False
                     return 1
                 if event.key == pygame.K_UP:

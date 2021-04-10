@@ -15,7 +15,7 @@ RED = (255, 0, 0)
 
 def ShowResults(clock, screen, stage_points, total_points, stage_graze,
                 total_graze, stage_gems, lives, clears, pass_stage, stage_name):
-    background = pygame.image.load("res/img/results2.png")
+    background = pygame.image.load("res/img/results.png")
 
     name_font = pygame.font.Font("res/misc/Symtext.ttf", 40)
     font = pygame.font.Font("res/misc/simsunb.ttf", 40)
