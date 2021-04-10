@@ -104,8 +104,9 @@ def main():
         start_time = time()
         continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives,\
             pause_differential, player_one = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
-                                                               orbs, screen, font, clock, total_points, player_one,
-                                                                player_magic_circle, lives, pause_differential)
+                                                                orbs, screen, font, clock, total_points, player_one,
+                                                                player_magic_circle, lives, pause_differential,
+                                                                joysticks)
         end_time = time()
         if not continue_game:
             running = False
@@ -130,8 +131,9 @@ def main():
             start_time = time()
             continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives,\
                 pause_differential, player_one = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
-                                                                orbs, screen, font, clock, total_points, player_one,
-                                                                player_magic_circle, lives, pause_differential)
+                                                                    orbs, screen, font, clock, total_points, player_one,
+                                                                    player_magic_circle, lives, pause_differential,
+                                                                    joysticks,)
             end_time = time()
             if not continue_game:
                 running = False

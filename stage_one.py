@@ -29,7 +29,7 @@ life_icon = pygame.image.load("res/img/life.png")
 
 def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
              screen, font, clock, points, player_one, player_magic_circle,
-             lives, pause_differential):
+             lives, pause_differential, joysticks):
     background = pygame.image.load("res/img/background6.png")
     best_time = time() - time()
     current_time = time() - time()
@@ -74,7 +74,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one.speed = SLOW
                 if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
                     pause_start = time()
-                    unpause = pause.PauseGame(font, screen)
+                    unpause = pause.PauseGame(font, screen, joysticks)
                     pause_end = time()
                     pause_differential += pause_end - pause_start
                     if unpause == 2:
@@ -134,7 +134,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one.speed = SLOW
                 if event.button == 9:
                     pause_start = time()
-                    unpause = pause.PauseGame(font, screen)
+                    unpause = pause.PauseGame(font, screen, joysticks)
                     pause_end = time()
                     pause_differential += pause_end - pause_start
                     if unpause == 2:
