@@ -155,7 +155,8 @@ def main():
     # STAGE TWO RESULTS
 
             continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
-                                                stage_gems, lives, stage_clears, pass_stage, joysticks, "STAGE TWO")
+                                                stage_gems, lives, stage_clears, pass_stage, joysticks, auto_clear,
+                                                "STAGE TWO")
             if not continue_game:
                 running = False
                 break

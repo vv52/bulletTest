@@ -13,15 +13,22 @@ def ShowOptions(clock, screen, joysticks):
     menu_down = False
     menu_select = False
     state = 0
+
     auto_clear_btn = pygame.image.load("res/img/auto_clear_button.png")
     auto_clear_btn_rect =\
-        auto_clear_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 112))
+        auto_clear_btn.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 112))
     save_exit_btn = pygame.image.load("res/img/save_exit_button.png")
     save_exit_btn_rect =\
         save_exit_btn.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
     exit_nosave_btn = pygame.image.load("res/img/exit_nosave_button.png")
     exit_nosave_btn_rect =\
         exit_nosave_btn.get_rect(center=(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
+
+    on_btn = pygame.image.load("res/img/on.png")
+    off_btn = pygame.image.load("res/img/off.png")
+    on_off_btn_rect = \
+        on_btn.get_rect(center=(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 112))
+
 
     options = []
     no_options = []
@@ -67,8 +74,10 @@ def ShowOptions(clock, screen, joysticks):
         if menu_select:
             if state == 0:
                 if auto_clear:
+                    auto_clear = False
                     options.remove("auto_clear")
                 else:
+                    auto_clear = True
                     options.append("auto_clear")
             if state == 1:
                 return options
@@ -90,6 +99,10 @@ def ShowOptions(clock, screen, joysticks):
 
         screen.blit(background, background.get_rect())
         screen.blit(auto_clear_btn, auto_clear_btn_rect)
+        if auto_clear:
+            screen.blit(on_btn, on_off_btn_rect)
+        else:
+            screen.blit(off_btn, on_off_btn_rect)
         screen.blit(save_exit_btn, save_exit_btn_rect)
         screen.blit(exit_nosave_btn, exit_nosave_btn_rect)
         pygame.display.flip()
