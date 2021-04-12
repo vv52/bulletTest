@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import controls
-import settings
+import options_menu
 
 FPS = 60
 
@@ -9,7 +9,7 @@ SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
 
-def TitleScreen(clock, screen, joysticks):
+def TitleScreen(clock, screen, joysticks, options):
     background = pygame.image.load("res/img/menu.png")
     menu_up = False
     menu_down = False
@@ -23,7 +23,6 @@ def TitleScreen(clock, screen, joysticks):
     options_btn_rect = options_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
     exit_game_btn = pygame.image.load("res/img/exit_game_button.png")
     exit_game_btn_rect = exit_game_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) + 56))
-    options = []
 
     title_screen = True
     while title_screen:
@@ -67,7 +66,7 @@ def TitleScreen(clock, screen, joysticks):
             if state == 1:
                 controls.ShowControls(clock, screen, joysticks)
             if state == 2:
-                options = settings.ShowOptions(clock, screen, joysticks)
+                options = options_menu.ShowOptions(clock, screen, joysticks, options)
                 pass
             if state == 3:
                 return 0, options

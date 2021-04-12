@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import json
 
 FPS = 60
 
@@ -7,7 +8,7 @@ SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
 
-def ShowOptions(clock, screen, joysticks):
+def ShowOptions(clock, screen, joysticks, options):
     background = pygame.image.load("res/img/menu.png")
     menu_up = False
     menu_down = False
@@ -29,11 +30,15 @@ def ShowOptions(clock, screen, joysticks):
     on_off_btn_rect = \
         on_btn.get_rect(center=(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 112))
 
+    with open("res/misc/settings.json") as json_file:
+        options = json.load(json_file)
 
-    options = []
-    no_options = []
+    no_options = options
 
-    auto_clear = False
+    if options["auto_clear"] == "on":
+        auto_clear = True
+    else:
+        auto_clear = False
 
     title_screen = True
     while title_screen:
@@ -75,14 +80,21 @@ def ShowOptions(clock, screen, joysticks):
             if state == 0:
                 if auto_clear:
                     auto_clear = False
-                    options.remove("auto_clear")
+                    options["auto_clear"] = "off"
                 else:
                     auto_clear = True
-                    options.append("auto_clear")
+                    options["auto_clear"] = "on"
             if state == 1:
+                with open("res/misc/settings.json", "w") as settings_file:
+                    json.dump(options, settings_file)
                 return options
             if state == 2:
-                return no_options
+                options = no_options
+                if no_options["auto_clear"] == "off":
+                    auto_clear = False
+                else:
+                    auto_clear = True
+                return options
 
         if state == 0:
             auto_clear_btn = pygame.image.load("res/img/auto_clear_button_sel.png")

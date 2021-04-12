@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 from pygame.math import Vector2
-from random import Random
 from time import time
 from datetime import datetime, timedelta
 import player
@@ -10,6 +9,7 @@ import stage_two
 import yukari
 import title
 import results
+import json
 import sys
 
 FPS = 60
@@ -79,7 +79,8 @@ def main():
     total_time = time() - time()
     pause_differential = time() - time()
 
-    options = []
+    with open("res/misc/settings.json") as json_file:
+        settings = json.load(json_file)
 
     auto_clear = False
 
@@ -98,7 +99,7 @@ def main():
 
     # TITLE
 
-        continue_game, options = title.TitleScreen(clock, screen, joysticks)
+        continue_game, options = title.TitleScreen(clock, screen, joysticks, settings)
         if not continue_game:
             running = False
             break
