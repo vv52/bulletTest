@@ -14,7 +14,7 @@ RED = (255, 0, 0)
 
 
 def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
-                stage_gems, lives, clears, pass_stage, joysticks, auto_clear, stage_name):
+                stage_gems, lives, clears, pass_stage, joysticks, options, stage_name):
     background = pygame.image.load("res/img/results.png")
 
     name_font = pygame.font.Font("res/misc/Symtext.ttf", 40)
@@ -34,6 +34,7 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
     clears_text = font.render(f"Remaining Clears: {clears}", True, WHITE)
     stage_gems_text = font.render(f"Stage Gems: {stage_gems}", True, WHITE)
     auto_clear_text = small_font.render("AUTO CLEAR", True, RED)
+    keep_graze_text = small_font.render("KEEP GRAZE", True, RED)
 
     stage_name_text_rect = stage_name_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET))
     pass_stage_text_rect = pass_stage_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET + 40))
@@ -45,6 +46,7 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
     clears_text_rect = clears_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 80))
     stage_gems_text_rect = stage_gems_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - OFFSET))
     auto_clear_text_rect = auto_clear_text.get_rect(center=(84, SCREEN_HEIGHT - 20))
+    keep_graze_text_rect = keep_graze_text.get_rect(center=(SCREEN_WIDTH - 84, SCREEN_HEIGHT - 20))
 
     results_screen = True
     while results_screen:
@@ -76,6 +78,8 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
         screen.blit(lives_text, lives_text_rect)
         screen.blit(clears_text, clears_text_rect)
         screen.blit(stage_gems_text, stage_gems_text_rect)
-        if auto_clear:
+        if options["auto_clear"] == "on":
             screen.blit(auto_clear_text, auto_clear_text_rect)
+        if options["keep_graze"] == "on":
+            screen.blit(keep_graze_text, keep_graze_text_rect)
         pygame.display.flip()

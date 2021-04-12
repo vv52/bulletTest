@@ -115,7 +115,7 @@ def main():
             pause_differential, player_one = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
                                                                 orbs, screen, font, clock, total_points, player_one,
                                                                 player_magic_circle, lives, pause_differential,
-                                                                joysticks, auto_clear)
+                                                                joysticks, options)
         end_time = time()
         if not continue_game:
             running = False
@@ -128,7 +128,7 @@ def main():
     # STAGE ONE RESULTS
 
         continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
-                                            stage_gems, lives, stage_clears, pass_stage, joysticks, auto_clear,
+                                            stage_gems, lives, stage_clears, pass_stage, joysticks, options,
                                             "STAGE ONE")
         if not continue_game:
             running = False
@@ -143,7 +143,7 @@ def main():
                 pause_differential, player_one = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
                                                                     orbs, screen, font, clock, total_points, player_one,
                                                                     player_magic_circle, lives, pause_differential,
-                                                                    joysticks, auto_clear)
+                                                                    joysticks, options)
             end_time = time()
             if not continue_game:
                 running = False
@@ -156,7 +156,7 @@ def main():
     # STAGE TWO RESULTS
 
             continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
-                                                stage_gems, lives, stage_clears, pass_stage, joysticks, auto_clear,
+                                                stage_gems, lives, stage_clears, pass_stage, joysticks, options,
                                                 "STAGE TWO")
             if not continue_game:
                 running = False

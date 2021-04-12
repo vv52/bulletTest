@@ -66,8 +66,9 @@ def TitleScreen(clock, screen, joysticks, options):
             if state == 1:
                 controls.ShowControls(clock, screen, joysticks)
             if state == 2:
-                options = options_menu.ShowOptions(clock, screen, joysticks, options)
-                pass
+                continue_game, options = options_menu.ShowOptions(clock, screen, joysticks, options)
+                if continue_game == 0:
+                    return 0, options
             if state == 3:
                 return 0, options
 
