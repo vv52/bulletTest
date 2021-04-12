@@ -1,7 +1,5 @@
 import pygame
 from pygame.locals import *
-import controls
-import settings
 
 FPS = 60
 
@@ -9,21 +7,26 @@ SCREEN_WIDTH = 512
 SCREEN_HEIGHT = 740
 
 
-def TitleScreen(clock, screen, joysticks):
+def ShowOptions(clock, screen, joysticks):
     background = pygame.image.load("res/img/menu.png")
     menu_up = False
     menu_down = False
     menu_select = False
     state = 0
-    start_game_btn = pygame.image.load("res/img/start_game_button.png")
-    start_game_btn_rect = start_game_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 112))
-    controls_btn = pygame.image.load("res/img/controls_button.png")
-    controls_btn_rect = controls_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 56))
-    options_btn = pygame.image.load("res/img/options_button.png")
-    options_btn_rect = options_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
-    exit_game_btn = pygame.image.load("res/img/exit_game_button.png")
-    exit_game_btn_rect = exit_game_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) + 56))
+    auto_clear_btn = pygame.image.load("res/img/auto_clear_button.png")
+    auto_clear_btn_rect =\
+        auto_clear_btn.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3) - 112))
+    save_exit_btn = pygame.image.load("res/img/save_exit_button.png")
+    save_exit_btn_rect =\
+        save_exit_btn.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
+    exit_nosave_btn = pygame.image.load("res/img/exit_nosave_button.png")
+    exit_nosave_btn_rect =\
+        exit_nosave_btn.get_rect(center=(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT - (SCREEN_HEIGHT / 3)))
+
     options = []
+    no_options = []
+
+    auto_clear = False
 
     title_screen = True
     while title_screen:
@@ -59,41 +62,36 @@ def TitleScreen(clock, screen, joysticks):
             if state > 0:
                 state -= 1
         if menu_down:
-            if state < 3:
+            if state < 2:
                 state += 1
         if menu_select:
             if state == 0:
-                return 1, options
+                if auto_clear:
+                    options.remove("auto_clear")
+                else:
+                    options.append("auto_clear")
             if state == 1:
-                controls.ShowControls(clock, screen, joysticks)
+                return options
             if state == 2:
-                options = settings.ShowOptions(clock, screen, joysticks)
-                pass
-            if state == 3:
-                return 0, options
+                return no_options
 
         if state == 0:
-            start_game_btn = pygame.image.load("res/img/start_game_button_sel.png")
+            auto_clear_btn = pygame.image.load("res/img/auto_clear_button_sel.png")
         else:
-            start_game_btn = pygame.image.load("res/img/start_game_button.png")
+            auto_clear_btn = pygame.image.load("res/img/auto_clear_button.png")
         if state == 1:
-            controls_btn = pygame.image.load("res/img/controls_button_sel.png")
+            save_exit_btn = pygame.image.load("res/img/save_exit_button_sel.png")
         else:
-            controls_btn = pygame.image.load("res/img/controls_button.png")
+            save_exit_btn = pygame.image.load("res/img/save_exit_button.png")
         if state == 2:
-            options_btn = pygame.image.load("res/img/options_button_sel.png")
+            exit_nosave_btn = pygame.image.load("res/img/exit_nosave_button_sel.png")
         else:
-            options_btn = pygame.image.load("res/img/options_button.png")
-        if state == 3:
-            exit_game_btn = pygame.image.load("res/img/exit_game_button_sel.png")
-        else:
-            exit_game_btn = pygame.image.load("res/img/exit_game_button.png")
+            exit_nosave_btn = pygame.image.load("res/img/exit_nosave_button.png")
 
         screen.blit(background, background.get_rect())
-        screen.blit(start_game_btn, start_game_btn_rect)
-        screen.blit(controls_btn, controls_btn_rect)
-        screen.blit(options_btn, options_btn_rect)
-        screen.blit(exit_game_btn, exit_game_btn_rect)
+        screen.blit(auto_clear_btn, auto_clear_btn_rect)
+        screen.blit(save_exit_btn, save_exit_btn_rect)
+        screen.blit(exit_nosave_btn, exit_nosave_btn_rect)
         pygame.display.flip()
         clock.tick(FPS)
         menu_up = False

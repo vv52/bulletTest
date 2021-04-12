@@ -14,11 +14,12 @@ RED = (255, 0, 0)
 
 
 def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
-                stage_gems, lives, clears, pass_stage, joysticks, stage_name):
+                stage_gems, lives, clears, pass_stage, joysticks, auto_clear, stage_name):
     background = pygame.image.load("res/img/results.png")
 
     name_font = pygame.font.Font("res/misc/Symtext.ttf", 40)
     font = pygame.font.Font("res/misc/simsunb.ttf", 40)
+    small_font = pygame.font.Font("res/misc/Symtext.ttf", 20)
 
     stage_name_text = name_font.render(stage_name, True, WHITE)
     if pass_stage:
@@ -32,6 +33,7 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
     lives_text = font.render(f"Remaining Lives: {lives}", True, WHITE)
     clears_text = font.render(f"Remaining Clears: {clears}", True, WHITE)
     stage_gems_text = font.render(f"Stage Gems: {stage_gems}", True, WHITE)
+    auto_clear_text = small_font.render("AUTO CLEAR", True, RED)
 
     stage_name_text_rect = stage_name_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET))
     pass_stage_text_rect = pass_stage_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET + 40))
@@ -42,6 +44,7 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
     lives_text_rect = lives_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 40))
     clears_text_rect = clears_text.get_rect(center=(SCREEN_WIDTH / 2, OFFSET * 5 + 80))
     stage_gems_text_rect = stage_gems_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - OFFSET))
+    auto_clear_text_rect = auto_clear_text.get_rect(center=(84, SCREEN_HEIGHT - 20))
 
     results_screen = True
     while results_screen:
@@ -73,4 +76,6 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
         screen.blit(lives_text, lives_text_rect)
         screen.blit(clears_text, clears_text_rect)
         screen.blit(stage_gems_text, stage_gems_text_rect)
+        if auto_clear:
+            screen.blit(auto_clear_text, auto_clear_text_rect)
         pygame.display.flip()

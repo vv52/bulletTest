@@ -79,6 +79,10 @@ def main():
     total_time = time() - time()
     pause_differential = time() - time()
 
+    options = []
+
+    auto_clear = False
+
     global running
     running = True
     while running:
@@ -94,10 +98,14 @@ def main():
 
     # TITLE
 
-        continue_game = title.TitleScreen(clock, screen, joysticks)
+        continue_game, options = title.TitleScreen(clock, screen, joysticks)
         if not continue_game:
             running = False
             break
+
+        for option in options:
+            if option == "auto_clear":
+                auto_clear = True
 
     # STAGE ONE
 
@@ -106,7 +114,7 @@ def main():
             pause_differential, player_one = stage_one.StageOne(boss, magic_circle, bullets, sprites, players,
                                                                 orbs, screen, font, clock, total_points, player_one,
                                                                 player_magic_circle, lives, pause_differential,
-                                                                joysticks)
+                                                                joysticks, auto_clear)
         end_time = time()
         if not continue_game:
             running = False
@@ -119,7 +127,8 @@ def main():
     # STAGE ONE RESULTS
 
         continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
-                                            stage_gems, lives, stage_clears, pass_stage, joysticks, "STAGE ONE")
+                                            stage_gems, lives, stage_clears, pass_stage, joysticks, auto_clear,
+                                            "STAGE ONE")
         if not continue_game:
             running = False
             break
@@ -133,7 +142,7 @@ def main():
                 pause_differential, player_one = stage_two.StageTwo(boss, magic_circle, bullets, sprites, players,
                                                                     orbs, screen, font, clock, total_points, player_one,
                                                                     player_magic_circle, lives, pause_differential,
-                                                                    joysticks,)
+                                                                    joysticks, auto_clear)
             end_time = time()
             if not continue_game:
                 running = False

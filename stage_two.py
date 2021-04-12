@@ -29,7 +29,7 @@ life_icon = pygame.image.load("res/img/life.png")
 
 def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
              screen, font, clock, points, player_one, player_magic_circle,
-             lives, pause_differential, joysticks):
+             lives, pause_differential, joysticks, auto_clear):
     background = pygame.image.load("res/img/background7.png")
     best_time = time() - time()
     current_time = time() - time()
@@ -383,21 +383,30 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         for bullet in bullets:
             player_one_hit = pygame.sprite.collide_mask(player_one, bullet)
             if player_one_hit and player_one.spawn_timer == 0:
-                death = True
-                death_loc = player_one.rect.center
-                player_one.kill()
-                for obj in bullets:
-                    obj.kill()
-                total_graze = 0
-                if lives == 0:
-                    stage = False
-                    return 1, points, total_graze, total_gems, player_one.clears,\
-                        False, lives, pause_differential, player_one
+                if auto_clear and player_one.clears > 0:
+                    player_one.clears -= 1
+                    for bullet in bullets:
+                        new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
+                        sprites.add(new_orb)
+                        orbs.add(new_orb)
+                        total_gems += 1
+                        bullet.kill()
                 else:
-                    lives -= 1
-                player_one = player.Player(256, 660)
-                sprites.add(player_one)
-                players.add(player_one)
+                    death = True
+                    death_loc = player_one.rect.center
+                    player_one.kill()
+                    for obj in bullets:
+                        obj.kill()
+                    total_graze = 0
+                    if lives == 0:
+                        stage = False
+                        return 1, points, total_graze, total_gems, player_one.clears, \
+                               False, lives, pause_differential, player_one
+                    else:
+                        lives -= 1
+                    player_one = player.Player(256, 660)
+                    sprites.add(player_one)
+                    players.add(player_one)
             if bullet.rect.x < 0:
                 bullet.kill()
             elif bullet.rect.x > SCREEN_WIDTH:

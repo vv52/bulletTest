@@ -49,7 +49,7 @@ def PauseGame(font, screen, joysticks):
                 if event.button == 9:
                     paused = False
                     return 1
-                if event.button == 1:
+                if event.button == 1 or event.button == 0 or event.button == 2:
                     menu_select = True
             if event.type == JOYAXISMOTION:
                 if event.axis == 4:
