@@ -8,5 +8,6 @@ This game is currently in development and is unfinished.
 | ----------- | ----------- |
 | ARROW KEYS | move |
 | LEFT SHIFT (hold) | slow |
+| Z | clear bullets |
 | ENTER | select |
-| P | pause |
+| P or ESC | pause |
