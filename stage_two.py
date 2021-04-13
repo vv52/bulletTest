@@ -28,8 +28,8 @@ life_icon = pygame.image.load("res/img/life.png")
 
 
 def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
-             screen, font, clock, points, player_one, player_magic_circle,
-             lives, pause_differential, joysticks, options):
+             screen, font, clock, prev_points, player_one, player_magic_circle,
+             lives, pause_differential, joysticks, options, e10, e25, e50):
     background = pygame.image.load("res/img/background7.png")
     best_time = time() - time()
     current_time = time() - time()
@@ -43,13 +43,14 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     death = False
     death_counter = 1
     graze_counter = 0
+    points = 0
     best_graze = 0
     last_graze_hit = False
     total_graze = 0
     total_gems = 0
-    extend_10k = False
-    extend_25k = False
-    extend_50k = False
+    extend_10k = e10
+    extend_25k = e25
+    extend_50k = e50
     inv_text = font.render("INVINCIBLE", True, WHITE)
     inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
     warning_image = pygame.image.load("res/img/warning.png")
@@ -61,7 +62,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
             if event.type == pygame.QUIT:
                 stage = False
                 return 0, points, total_graze, total_gems, player_one.clears, \
-                       False, lives, pause_differential, player_one
+                       False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -100,7 +102,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one
+                               False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
                 if event.key == pygame.K_z and player_one.spawn_timer == 0:
                     if player_one.clears > 0:
                         player_one.clears -= 1
@@ -160,7 +163,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one
+                               False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
             if event.type == JOYBUTTONUP:
                 if event.button == 7:
                     player_one.speed = FAST
@@ -362,7 +366,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
         if phase_counter > 10300:
             magic_circle.fast = False
             stage = False
-            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one
+            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one, \
+                   extend_10k, extend_25k, extend_50k
 
     # HANDLE PLAYER
 
@@ -402,7 +407,8 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     if lives == 0:
                         stage = False
                         return 1, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one
+                               False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
                     else:
                         lives -= 1
                     player_one = player.Player(256, 660)
@@ -459,7 +465,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                 death_counter = 1
                 death = False
 
-        points_text = font.render(f"{points}", True, WHITE)
+        points_text = font.render(f"{points + prev_points}", True, WHITE)
         points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
         total_gems_text = font.render(f"{total_gems}", True, YELLOW)
         total_gems_text_rect = total_gems_text.get_rect(center=(80, 40))

@@ -103,7 +103,7 @@ def ShowOptions(clock, screen, joysticks, options):
             if state == 2:
                 with open("res/misc/settings.json", "w") as settings_file:
                     json.dump(options, settings_file)
-                return options
+                return 1, options
             if state == 3:
                 options = no_options
                 if no_options["auto_clear"] == "off":
@@ -114,7 +114,7 @@ def ShowOptions(clock, screen, joysticks, options):
                     keep_graze = False
                 else:
                     keep_graze = True
-                return options
+                return 1, options
 
         if state == 0:
             auto_clear_btn = pygame.image.load("res/img/auto_clear_button_sel.png")

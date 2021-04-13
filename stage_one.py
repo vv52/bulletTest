@@ -53,6 +53,10 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     inv_text = font.render("INVINCIBLE", True, WHITE)
     inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
     warning_image = pygame.image.load("res/img/warning.png")
+    stage_one_theme = pygame.mixer.Sound("res/audio/stage_one_theme.ogg")
+    stage_one_theme.set_volume(float(options["music_volume"]))
+
+    stage_one_theme.play()
 
     stage = True
     while stage:
@@ -60,7 +64,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
             if event.type == pygame.QUIT:
                 stage = False
                 return 0, points, total_graze, total_gems, player_one.clears,\
-                       False, lives, pause_differential, player_one
+                       False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -73,11 +78,15 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = SLOW
                 if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
+                    pygame.mixer.pause()
                     pause_start = time()
                     unpause = pause.PauseGame(font, screen, joysticks)
                     pause_end = time()
+                    pygame.mixer.unpause()
                     pause_differential += pause_end - pause_start
                     if unpause == 2:
+                        stage_one_theme.stop()
+                        stage_one_theme.play()
                         player_one.kill()
                         for obj in bullets:
                             obj.kill()
@@ -99,7 +108,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears,\
-                               False, lives, pause_differential, player_one
+                               False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
                 if event.key == pygame.K_z and player_one.spawn_timer == 0:
                     if player_one.clears > 0:
                         player_one.clears -= 1
@@ -159,7 +169,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one
+                               False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
             if event.type == JOYBUTTONUP:
                 if event.button == 7:
                     player_one.speed = FAST
@@ -334,7 +345,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         if phase_counter > 10300:
             magic_circle.fast = False
             stage = False
-            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one
+            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one,\
+                   extend_10k, extend_25k, extend_50k
 
     # HANDLE PLAYER
 
@@ -374,7 +386,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     if lives == 0:
                         stage = False
                         return 1, points, total_graze, total_gems, player_one.clears,\
-                               False, lives, pause_differential, player_one
+                               False, lives, pause_differential, player_one, extend_10k,\
+                               extend_25k, extend_50k
                     else:
                         lives -= 1
                     player_one = player.Player(256, 660)

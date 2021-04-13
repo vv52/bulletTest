@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 from pygame.locals import *
 
 FPS = 60
@@ -20,6 +21,8 @@ def ShowResults(clock, screen, stage_points, total_points, stage_graze, total_gr
     name_font = pygame.font.Font("res/misc/Symtext.ttf", 40)
     font = pygame.font.Font("res/misc/simsunb.ttf", 40)
     small_font = pygame.font.Font("res/misc/Symtext.ttf", 20)
+
+    pygame.mixer.stop()
 
     stage_name_text = name_font.render(stage_name, True, WHITE)
     if pass_stage:
