@@ -35,7 +35,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 10200
+    phase_counter = 0
     frame_counter = 0
     ticker = 0
     best_points = 0

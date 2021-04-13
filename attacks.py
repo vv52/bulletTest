@@ -89,3 +89,63 @@ def QuarterSpawner(loc, div, kind, offset, bullets, sprites):
         bullets.add(new_bullet)
         sprites.add(new_bullet)
         bullet_counter += 1
+
+
+def Stream(loc, angle, kind, bullets, sprites):
+    if kind == "w":
+        new_bullet = projectiles.WarblyBullet(loc.x, loc.y, angle + 90)
+    elif kind == "s":
+        new_bullet = projectiles.SpiralBullet(loc.x, loc.y, angle + 90)
+    elif kind == "s2":
+        new_bullet = projectiles.SpiralBullet2(loc.x, loc.y, angle + 90)
+    elif kind == "s3":
+        new_bullet = projectiles.SpiralBullet3(loc.x, loc.y, angle + 90)
+    elif kind == "s3i":
+        new_bullet = projectiles.SpiralBullet3Inverse(loc.x, loc.y, angle + 90)
+    elif kind == "s4":
+        new_bullet = projectiles.SpiralBullet4(loc.x, loc.y, angle + 90)
+    elif kind == "s4i":
+        new_bullet = projectiles.SpiralBullet4Inverse(loc.x, loc.y, angle + 90)
+    elif kind == "b2":
+        new_bullet = projectiles.Bullet2(loc.x, loc.y, angle + 90)
+    else:
+        new_bullet = projectiles.Bullet(loc.x, loc.y, angle + 90)
+    bullets.add(new_bullet)
+    sprites.add(new_bullet)
+
+
+def Gatling(loc, div, dir, width, count, kind, bullets, sprites):
+    pos = count % div
+    angle = 0
+    if dir == "right":
+        angle = 0
+        loc.y += (pos * width) - ((div * width) / 2)
+    elif dir == "down":
+        angle = 90
+        loc.x += (pos * width) - ((div * width) / 2)
+    elif dir == "left":
+        angle = 180
+        loc.y += (pos * width) - ((div * width) / 2)
+    elif dir == "up":
+        angle = 270
+        loc.x += (pos * width) - ((div * width) / 2)
+    if kind == "w":
+        new_bullet = projectiles.WarblyBullet(loc.x, loc.y, angle)
+    elif kind == "s":
+        new_bullet = projectiles.SpiralBullet(loc.x, loc.y, angle)
+    elif kind == "s2":
+        new_bullet = projectiles.SpiralBullet2(loc.x, loc.y, angle)
+    elif kind == "s3":
+        new_bullet = projectiles.SpiralBullet3(loc.x, loc.y, angle)
+    elif kind == "s3i":
+        new_bullet = projectiles.SpiralBullet3Inverse(loc.x, loc.y, angle)
+    elif kind == "s4":
+        new_bullet = projectiles.SpiralBullet4(loc.x, loc.y, angle)
+    elif kind == "s4i":
+        new_bullet = projectiles.SpiralBullet4Inverse(loc.x, loc.y, angle)
+    elif kind == "b2":
+        new_bullet = projectiles.Bullet2(loc.x, loc.y, angle)
+    else:
+        new_bullet = projectiles.Bullet(loc.x, loc.y, angle)
+    bullets.add(new_bullet)
+    sprites.add(new_bullet)
