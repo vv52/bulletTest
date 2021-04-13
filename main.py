@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 import player
 import stage_one
 import stage_two
+import stage_three
 import yukari
 import title
 import results
@@ -158,6 +159,35 @@ def main():
             continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze, total_graze,
                                                 stage_gems, lives, stage_clears, pass_stage, joysticks, options,
                                                 "STAGE TWO")
+            if not continue_game:
+                running = False
+                break
+
+    # STAGE THREE
+
+        if pass_stage:
+            player_one.pos = vec(256, 660)
+            start_time = time()
+            continue_game, stage_points, stage_graze, stage_gems, stage_clears, pass_stage, lives, pause_differential,\
+            player_one, e10, e25, e50 = stage_three.StageThree(boss, magic_circle, bullets, sprites, players,
+                                                           orbs, screen, font, clock, total_points, player_one,
+                                                           player_magic_circle, lives, pause_differential,
+                                                           joysticks, options, e10, e25, e50)
+            end_time = time()
+            if not continue_game:
+                running = False
+                break
+            stage_times.append(end_time - start_time - pause_differential)
+            total_points += stage_points
+            total_graze += stage_graze
+            total_gems += stage_gems
+
+    # STAGE THREE RESULTS
+
+            continue_game = results.ShowResults(clock, screen, stage_points, total_points, stage_graze,
+                                                total_graze,
+                                                stage_gems, lives, stage_clears, pass_stage, joysticks, options,
+                                                "STAGE THREE")
             if not continue_game:
                 running = False
                 break

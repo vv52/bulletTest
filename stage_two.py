@@ -35,7 +35,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 0
+    phase_counter = 10200
     frame_counter = 0
     ticker = 0
     best_points = 0
@@ -55,6 +55,11 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
     warning_image = pygame.image.load("res/img/warning.png")
     warning_image_rect = warning_image.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)))
+
+    player_one.up = False
+    player_one.down = False
+    player_one.left = False
+    player_one.right = False
 
     stage = True
     while stage:

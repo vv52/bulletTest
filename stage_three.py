@@ -27,15 +27,15 @@ clear_icon = pygame.image.load("res/img/clear.png")
 life_icon = pygame.image.load("res/img/life.png")
 
 
-def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
-             screen, font, clock, points, player_one, player_magic_circle,
-             lives, pause_differential, joysticks, options):
-    background = pygame.image.load("res/img/background6.png")
+def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
+             screen, font, clock, prev_points, player_one, player_magic_circle,
+             lives, pause_differential, joysticks, options, e10, e25, e50):
+    background = pygame.image.load("res/img/background8.png")
     best_time = time() - time()
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 10200
+    phase_counter = 0
     frame_counter = 0
     ticker = 0
     best_points = 0
@@ -43,32 +43,30 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     death = False
     death_counter = 1
     graze_counter = 0
+    points = 0
     best_graze = 0
     last_graze_hit = False
     total_graze = 0
     total_gems = 0
-    extend_10k = False
-    extend_25k = False
-    extend_50k = False
+    extend_10k = e10
+    extend_25k = e25
+    extend_50k = e50
     inv_text = font.render("INVINCIBLE", True, WHITE)
     inv_text_rect = inv_text.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
     warning_image = pygame.image.load("res/img/warning.png")
-    stage_one_theme = pygame.mixer.Sound("res/audio/stage_one_theme.ogg")
-    stage_one_theme.set_volume(float(options["music_volume"]))
+    warning_image_rect = warning_image.get_rect(center=(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)))
 
     player_one.up = False
     player_one.down = False
     player_one.left = False
     player_one.right = False
 
-    stage_one_theme.play()
-
     stage = True
     while stage:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 stage = False
-                return 0, points, total_graze, total_gems, player_one.clears,\
+                return 0, points, total_graze, total_gems, player_one.clears, \
                        False, lives, pause_differential, player_one, extend_10k,\
                                extend_25k, extend_50k
             if event.type == pygame.KEYDOWN:
@@ -83,15 +81,11 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 if event.key == pygame.K_LSHIFT:
                     player_one.speed = SLOW
                 if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
-                    pygame.mixer.pause()
                     pause_start = time()
                     unpause = pause.PauseGame(font, screen, joysticks)
                     pause_end = time()
-                    pygame.mixer.unpause()
                     pause_differential += pause_end - pause_start
                     if unpause == 2:
-                        stage_one_theme.stop()
-                        stage_one_theme.play()
                         player_one.kill()
                         for obj in bullets:
                             obj.kill()
@@ -112,7 +106,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                         players.add(player_one)
                     if not unpause:
                         stage = False
-                        return 0, points, total_graze, total_gems, player_one.clears,\
+                        return 0, points, total_graze, total_gems, player_one.clears, \
                                False, lives, pause_differential, player_one, extend_10k,\
                                extend_25k, extend_50k
                 if event.key == pygame.K_z and player_one.spawn_timer == 0:
@@ -206,25 +200,35 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
     # PHASE TRANSITION / RESET
 
         if phase_counter < 200:
-            at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3))
+            at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
             if not at_position:
                 magic_circle.fast = True
             magic_circle.rect.center = boss.rect.center
 
     # PHASE ONE
 
-        if phase_counter <= 1800:
+        if ticker == 360:
+            ticker = 0
+        if 1 <= phase_counter <= 900:
             magic_circle.fast = False
-            if frame_counter % 25 == 0:
-                if ticker < 20:
-                    ticker += 1
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker, "b", ticker * 10, bullets, sprites)
-            if frame_counter % 100 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker / 2, "w", 0, bullets, sprites)
-            if frame_counter % 245 == 0 or frame_counter % 250 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker * 2, "s", ticker, bullets, sprites)
-            if frame_counter == 500:
+            if frame_counter % 5 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4", ticker, bullets, sprites)
+            if frame_counter % 60 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 15, "b", -ticker, bullets, sprites)
+            if frame_counter % 120 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 10, "w", ticker, bullets, sprites)
+            if frame_counter == 600:
                 frame_counter = 0
+        if 901 <= phase_counter <= 1800:
+            if frame_counter % 5 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4", -ticker, bullets, sprites)
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4", -ticker - 10, bullets, sprites)
+            if frame_counter % 30 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+                                      10, "b", rand.randint(0, 89), bullets, sprites)
+            if frame_counter == 600:
+                frame_counter = 0
+        ticker += 1
 
     # PHASE TRANSITION
 
@@ -238,108 +242,114 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
 
         if 1980 <= phase_counter <= 3780:
             magic_circle.fast = False
-            if frame_counter % 30 == 0:
-                if ticker < 30:
-                    ticker += 2
+            if frame_counter % 120 < 60:
+                if frame_counter % 5 == 0:
+                    attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
+                                          6, "s4", -ticker, bullets, sprites)
+                    attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
+                                          6, "s4i", -ticker - 10, bullets, sprites)
+            if frame_counter % 120 == 60:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
-                              3, "b", rand.randint(0, 360), bullets, sprites)
-            if frame_counter % 60 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
-                              2, "s", rand.randint(0, 360), bullets, sprites)
-            if frame_counter % 120 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4), ticker * 2, "w", 0, bullets, sprites)
-            if frame_counter == 480:
-                frame_counter = 0
+                                      30, "b2", rand.randint(0,45), bullets, sprites)
 
     # PHASE TRANSITION
 
-        if 3780 < phase_counter < 3960:
-            at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3))
-            if not at_position:
-                magic_circle.fast = True
-            magic_circle.rect.center = boss.rect.center
+    #    if 3780 < phase_counter < 4060:
+    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8))
+    #        if not at_position:
+    #            magic_circle.fast = True
+    #        magic_circle.rect.center = boss.rect.center
 
     # PHASE THREE
 
-        if 3960 <= phase_counter <= 5760:
-            magic_circle.fast = False
-            if frame_counter % 30 == 0:
-                if ticker < 30:
-                    ticker += 1
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker, "s2", ticker * 10, bullets, sprites)
-            if frame_counter % 100 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), ticker / 5, "s3", ticker * 2, bullets, sprites)
-            if frame_counter % 300 == 0:
-                attacks.BarSpawner(32, 20, 90, "b2", bullets, sprites)
-            if frame_counter == 600:
-                frame_counter = 0
+    #    if 3960 <= phase_counter <= 5760:
+    #        magic_circle.fast = False
+    #        if frame_counter % 30 == 0:
+    #            if ticker < 40:
+    #                ticker += 1
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8),
+    #                                  ticker, "s4", ticker * 10, bullets, sprites)
+    #        if frame_counter % 60 == 0:
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)),
+    #                                  15, "s2", rand.randint(0, 360), bullets, sprites)
+    #        if frame_counter % 100 == 0:
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 8),
+    #                                  ticker / 5, "s4i", ticker * 2, bullets, sprites)
+    #        if frame_counter == 600:
+    #            frame_counter = 0
 
-    # phase transition
-
-        if 5760 < phase_counter < 5940:
-            at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8))
-            if not at_position:
-                magic_circle.fast = True
-            magic_circle.rect.center = boss.rect.center
+    #    if 5760 < phase_counter < 6040:
+    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8))
+    #        if not at_position:
+    #            magic_circle.fast = True
+    #        magic_circle.rect.center = boss.rect.center
 
     # PHASE FOUR
 
-        if 5940 <= phase_counter <= 7740:
-            magic_circle.fast = False
-            if frame_counter % 60 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 8),
-                              50, "b", rand.randint(45, 135), bullets, sprites)
-            if frame_counter % 200 == 0:
-                attacks.BarSpawner(SCREEN_HEIGHT / 8, 20, 90, "w", bullets, sprites)
-            if frame_counter % 300 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-                              25, "s", rand.randint(0, 360), bullets, sprites)
-            if frame_counter == 600 == 0:
-                frame_counter = 0
+    #    if 5940 <= phase_counter <= 7740:
+    #        magic_circle.fast = False
+    #        if frame_counter % 30 == 0:
+    #            if ticker < 40:
+    #                ticker += 1
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
+    #                                  ticker, "s4", ticker * 10, bullets, sprites)
+    #        if frame_counter % 60 == 0:
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)),
+    #                                  15, "s2", rand.randint(0, 360), bullets, sprites)
+    #        if frame_counter % 100 == 0:
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
+    #                                  ticker / 5, "s4i", ticker * 2, bullets, sprites)
+    #        if frame_counter == 600:
+    #            frame_counter = 0
 
     # PHASE TRANSITION
 
-        if 7740 < phase_counter < 7800:
-            at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10))
-            if not at_position:
-                magic_circle.fast = True
-            magic_circle.rect.center = boss.rect.center
+    #    if 7740 < phase_counter < 7800:
+    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10))
+    #        if not at_position:
+    #            magic_circle.fast = True
+    #        magic_circle.rect.center = boss.rect.center
 
     # PHASE FOUR AND A HALF
 
-        if 7800 <= phase_counter <= 8020:
-            magic_circle.fast = False
-            if frame_counter % 10 == 0:
-                attacks.BarSpawner(32, 10, rand.randint(45, 135), "b2", bullets, sprites)
-            if frame_counter == 60:
-                frame_counter = 0
+    #    if 7800 <= phase_counter <= 8020:
+    #        magic_circle.fast = False
+    #        if frame_counter % 10 == 0:
+    #            attacks.BarSpawner(32, 80, rand.randint(45, 135), "w", bullets, sprites)
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH - 16, 16), 10, "b", rand.randint(90, 135), bullets, sprites)
+    #            attacks.CircleSpawner(vec(16, 16), 10, "b", rand.randint(0, 45), bullets, sprites)
+    #        if frame_counter == 60:
+    #            frame_counter = 0
 
     # PHASE TRANSITION
 
-        if 8020 < phase_counter < 8200:
-            at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-            if not at_position:
-                magic_circle.fast = True
-            magic_circle.rect.center = boss.rect.center
+    #    if 8020 < phase_counter < 8200:
+    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+    #        if not at_position:
+    #            magic_circle.fast = True
+    #        magic_circle.rect.center = boss.rect.center
 
-        if phase_counter == 8199:
-            for bullet in bullets:
-                bullet.kill()
+    #    if phase_counter == 8199:
+    #        for bullet in bullets:
+    #            bullet.kill()
 
     # PHASE FIVE
 
-        if 8200 <= phase_counter <= 10000:
-            magic_circle.fast = False
-            if frame_counter % 30 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-                              5, "b2", rand.randint(45, 135), bullets, sprites)
-            if frame_counter % 90 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, 8),
-                              40, "s3", rand.randint(0, 360), bullets, sprites)
-            if frame_counter % 180 == 0:
-                attacks.BarSpawner(SCREEN_HEIGHT - 8, 20, 270, "w", bullets, sprites)
-            if frame_counter % 360 == 0:
-                frame_counter = 0
+    #    if 8200 <= phase_counter <= 10000:
+    #        magic_circle.fast = False
+    #        if frame_counter % 10 == 0:
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+    #                                  5, "b", rand.randint(0, 360), bullets, sprites)
+    #        if frame_counter % 100 == 0:
+    #            if phase_counter < 9100:
+    #                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+    #                                  40, "s4i", rand.randint(0, 360), bullets, sprites)
+    #            else:
+    #                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+    #                                      40, "s4", rand.randint(0, 360), bullets, sprites)
+    #        if frame_counter % 500 == 0:
+    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+    #                                  20, "w", rand.randint(0, 360), bullets, sprites)
 
     # END STAGE
 
@@ -350,7 +360,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         if phase_counter > 10300:
             magic_circle.fast = False
             stage = False
-            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one,\
+            return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one, \
                    extend_10k, extend_25k, extend_50k
 
     # HANDLE PLAYER
@@ -390,7 +400,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                         total_graze = 0
                     if lives == 0:
                         stage = False
-                        return 1, points, total_graze, total_gems, player_one.clears,\
+                        return 1, points, total_graze, total_gems, player_one.clears, \
                                False, lives, pause_differential, player_one, extend_10k,\
                                extend_25k, extend_50k
                     else:
@@ -398,7 +408,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one = player.Player(256, 660)
                     sprites.add(player_one)
                     players.add(player_one)
-            if bullet.rect.x < -8:
+            if bullet.rect.x < 0:
                 bullet.kill()
             elif bullet.rect.x > SCREEN_WIDTH:
                 bullet.kill()
@@ -430,7 +440,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
             for hit in orb_hits:
                 points += 5
 
-    # DRAW TO SCREEN
+        # DRAW TO SCREEN
 
         screen.blit(background, background.get_rect())
         for obj in sprites:
@@ -449,7 +459,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 death_counter = 1
                 death = False
 
-        points_text = font.render(f"{points}", True, WHITE)
+        points_text = font.render(f"{points + prev_points}", True, WHITE)
         points_text_rect = points_text.get_rect(center=(SCREEN_WIDTH - 80, 40))
         total_gems_text = font.render(f"{total_gems}", True, YELLOW)
         total_gems_text_rect = total_gems_text.get_rect(center=(80, 40))
@@ -476,7 +486,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
         if lives > 0:
             lives_index = lives
             while lives_index > 0:
-                screen.blit(life_icon, life_icon.get_rect(center=((SCREEN_WIDTH - (40 * lives_index)), SCREEN_HEIGHT - 40)))
+                screen.blit(life_icon,
+                            life_icon.get_rect(center=((SCREEN_WIDTH - (40 * lives_index)), SCREEN_HEIGHT - 40)))
                 lives_index -= 1
 
         if phase_counter <= 300:
@@ -489,11 +500,18 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 phase_text = font.render("PHASE TWO", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
+        if 3860 <= phase_counter < 3960:
+            if phase_counter % 80 < 50:
+                if phase_counter % 10 < 5:
+                    screen.blit(warning_image, warning_image_rect)
         if 3960 <= phase_counter <= 4260:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE THREE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
+            if phase_counter % 80 < 50:
+                if phase_counter % 10 < 5:
+                    screen.blit(warning_image, warning_image_rect)
         if 5940 <= phase_counter <= 6240:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FOUR", True, WHITE)
@@ -501,19 +519,12 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                 screen.blit(phase_text, phase_text_rect)
             if phase_counter % 80 < 50:
                 if phase_counter % 10 < 5:
-                    warning_image_rect = warning_image.get_rect(
-                        center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - (SCREEN_HEIGHT / 2)))
                     screen.blit(warning_image, warning_image_rect)
         if 8200 <= phase_counter <= 8500:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FIVE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-            if phase_counter % 80 < 50:
-                if phase_counter % 10 < 5:
-                    warning_image_rect = warning_image.get_rect(
-                        center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 40))
-                    screen.blit(warning_image, warning_image_rect)
         if 10000 <= phase_counter <= 10300:
             if phase_counter % 60 < 30:
                 phase_text = font.render("STAGE CLEAR", True, TURQUOISE)
@@ -524,7 +535,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
             if phase_counter % 20 < 10:
                 screen.blit(inv_text, inv_text_rect)
 
-    # FRAME UPKEEP
+        # FRAME UPKEEP
 
         pygame.display.flip()
         clock.tick(FPS)
