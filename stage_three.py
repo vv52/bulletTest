@@ -271,7 +271,36 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                                    3, "right", 16, phase_counter, "s4i", bullets, sprites)
             if frame_counter % 30 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), 30, "s2", ticker, bullets, sprites)
-    #    if 4861 <= phase_counter <= 5760:
+
+        if phase_counter == 4860:
+            ticker2 = 0
+            ticker_up = True
+            invert = False
+        if 4861 <= phase_counter <= 5760:
+            if frame_counter % 30 == 0:
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
+                                      30, "w", phase_counter - ticker2, bullets, sprites)
+            if frame_counter % 60 == 0:
+                attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), 180 - (30 + ticker2), "cr", bullets, sprites)
+                if ticker2 == 120:
+                    ticker_up = False
+                elif ticker2 == 0:
+                    ticker_up = True
+                if ticker_up:
+                    ticker2 += 30
+                else:
+                    ticker2 -= 30
+            if frame_counter % 240 == 0:
+                if invert == False:
+                    invert = True
+                else:
+                    invert = False
+
+                if invert:
+                    attacks.BarSpawner(32, 30, 90, "b", bullets, sprites)
+                else:
+                    attacks.BarSpawner(32, 30, 90, "b", bullets, sprites)
+
     #        if frame_counter % 2 == 0:
     #            attacks.Gatling(vec(SCREEN_WIDTH - 8, SCREEN_HEIGHT / 2),
     #                                3, "left", 16, phase_counter, "s4", bullets, sprites)
@@ -413,13 +442,13 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one = player.Player(256, 660)
                     sprites.add(player_one)
                     players.add(player_one)
-            if bullet.rect.x < 0:
+            if bullet.rect.center[0] < -8:
                 bullet.kill()
-            elif bullet.rect.x > SCREEN_WIDTH:
+            elif bullet.rect.center[0] > SCREEN_WIDTH + 8:
                 bullet.kill()
-            elif bullet.rect.y > SCREEN_HEIGHT:
+            elif bullet.rect.center[1] > SCREEN_HEIGHT + 8:
                 bullet.kill()
-            elif bullet.rect.y < 0:
+            elif bullet.rect.center[1] < -8:
                 bullet.kill()
 
         graze_hit = pygame.sprite.spritecollide(player_one, bullets, False)
@@ -505,26 +534,16 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                 phase_text = font.render("PHASE TWO", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-        if 3860 <= phase_counter < 3960:
-            if phase_counter % 80 < 50:
-                if phase_counter % 10 < 5:
-                    screen.blit(warning_image, warning_image_rect)
         if 3960 <= phase_counter <= 4260:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE THREE", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-            if phase_counter % 80 < 50:
-                if phase_counter % 10 < 5:
-                    screen.blit(warning_image, warning_image_rect)
         if 5940 <= phase_counter <= 6240:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FOUR", True, WHITE)
                 phase_text_rect = phase_text.get_rect(center=(SCREEN_WIDTH / 2, 40))
                 screen.blit(phase_text, phase_text_rect)
-            if phase_counter % 80 < 50:
-                if phase_counter % 10 < 5:
-                    screen.blit(warning_image, warning_image_rect)
         if 8200 <= phase_counter <= 8500:
             if phase_counter % 60 < 30:
                 phase_text = font.render("PHASE FIVE", True, WHITE)

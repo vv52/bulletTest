@@ -108,6 +108,8 @@ def Stream(loc, angle, kind, bullets, sprites):
         new_bullet = projectiles.SpiralBullet4Inverse(loc.x, loc.y, angle + 90)
     elif kind == "b2":
         new_bullet = projectiles.Bullet2(loc.x, loc.y, angle + 90)
+    elif kind == "cr":
+        new_bullet = projectiles.BulletCross(loc.x, loc.y, angle)
     else:
         new_bullet = projectiles.Bullet(loc.x, loc.y, angle + 90)
     bullets.add(new_bullet)

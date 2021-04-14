@@ -35,7 +35,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 0
+    phase_counter = 10299
     frame_counter = 0
     ticker = 0
     best_points = 0
@@ -419,13 +419,13 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                     player_one = player.Player(256, 660)
                     sprites.add(player_one)
                     players.add(player_one)
-            if bullet.rect.x < 0:
+            if bullet.rect.center < -8:
                 bullet.kill()
-            elif bullet.rect.x > SCREEN_WIDTH:
+            elif bullet.rect.center > SCREEN_WIDTH + 8:
                 bullet.kill()
-            elif bullet.rect.y > SCREEN_HEIGHT:
+            elif bullet.rect.center > SCREEN_HEIGHT + 8:
                 bullet.kill()
-            elif bullet.rect.y < 0:
+            elif bullet.rect.center < -8:
                 bullet.kill()
 
         graze_hit = pygame.sprite.spritecollide(player_one, bullets, False)
