@@ -116,7 +116,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
-                            total_gems += 1
+                            total_gems += bullet.gems
                             bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
@@ -137,7 +137,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
-                            total_gems += 1
+                            total_gems += bullet.gems
                             bullet.kill()
                 if event.button == 7:
                     player_one.speed = SLOW
@@ -399,7 +399,7 @@ def StageTwo(boss, magic_circle, bullets, sprites, players, orbs,
                         new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                         sprites.add(new_orb)
                         orbs.add(new_orb)
-                        total_gems += 1
+                        total_gems += bullet.gems
                         bullet.kill()
                 else:
                     death = True

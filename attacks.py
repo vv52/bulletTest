@@ -25,6 +25,14 @@ def CircleSpawner(loc, div, kind, offset, bullets, sprites):
             new_bullet = projectiles.SpiralBullet4Inverse(loc.x, loc.y, bullet_counter * angle + offset)
         elif kind == "b2":
             new_bullet = projectiles.Bullet2(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "cr":
+            new_bullet = projectiles.BulletCross(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "ma":
+            new_bullet = projectiles.BulletModA(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "mb":
+            new_bullet = projectiles.BulletModB(loc.x, loc.y, bullet_counter * angle + offset)
+        elif kind == "bd":
+            new_bullet = projectiles.BulletBarD(loc.x, loc.y, bullet_counter * angle + offset)
         else:
             new_bullet = projectiles.Bullet(loc.x, loc.y, bullet_counter * angle + offset)
         bullets.add(new_bullet)
@@ -57,6 +65,14 @@ def BarSpawner(loc_y, div, angle, kind, bullets, sprites):
                 new_bullet = projectiles.SpiralBullet4Inverse(space * bullet_counter, loc_y, angle)
             elif kind == "b2":
                 new_bullet = projectiles.Bullet2(space * bullet_counter, loc_y, angle)
+            elif kind == "cr":
+                new_bullet = projectiles.BulletCross(space * bullet_counter, loc_y, angle)
+            elif kind == "ma":
+                new_bullet = projectiles.BulletModA(space * bullet_counter, loc_y, angle)
+            elif kind == "mb":
+                new_bullet = projectiles.BulletModB(space * bullet_counter, loc_y, angle)
+            elif kind == "bd":
+                new_bullet = projectiles.BulletBarD(space * bullet_counter, loc_y, angle)
             else:
                 new_bullet = projectiles.Bullet(space * bullet_counter, loc_y, angle)
             bullets.add(new_bullet)
@@ -84,6 +100,14 @@ def QuarterSpawner(loc, div, kind, offset, bullets, sprites):
             new_bullet = projectiles.SpiralBullet4Inverse(loc.x, loc.y, bullet_counter * angle + 45 + offset)
         elif kind == "b2":
             new_bullet = projectiles.Bullet2(loc.x, loc.y, bullet_counter * angle + 45 + offset)
+        elif kind == "cr":
+            new_bullet = projectiles.BulletCross(loc.x, loc.y, bullet_counter * angle + 45 + offset)
+        elif kind == "ma":
+            new_bullet = projectiles.BulletModA(loc.x, loc.y, bullet_counter * angle + 45 + offset)
+        elif kind == "mb":
+            new_bullet = projectiles.BulletModB(loc.x, loc.y, bullet_counter * angle + 45 + offset)
+        elif kind == "bd":
+            new_bullet = projectiles.BulletBarD(loc.x, loc.y, bullet_counter * angle + 45 + offset)
         else:
             new_bullet = projectiles.Bullet(loc.x, loc.y, bullet_counter * angle + 45 + offset)
         bullets.add(new_bullet)
@@ -153,6 +177,14 @@ def Gatling(loc, div, dir, width, count, kind, bullets, sprites):
         new_bullet = projectiles.SpiralBullet4Inverse(loc.x, loc.y, angle)
     elif kind == "b2":
         new_bullet = projectiles.Bullet2(loc.x, loc.y, angle)
+    elif kind == "cr":
+        new_bullet = projectiles.BulletCross(loc.x, loc.y, angle)
+    elif kind == "ma":
+        new_bullet = projectiles.BulletModA(loc.x, loc.y, angle)
+    elif kind == "mb":
+        new_bullet = projectiles.BulletModB(loc.x, loc.y, angle)
+    elif kind == "bd":
+        new_bullet = projectiles.BulletBarD(loc.x, loc.y, angle)
     else:
         new_bullet = projectiles.Bullet(loc.x, loc.y, angle)
     bullets.add(new_bullet)

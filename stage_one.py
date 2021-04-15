@@ -122,7 +122,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
-                            total_gems += 1
+                            total_gems += bullet.gems
                             bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
@@ -143,7 +143,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
-                            total_gems += 1
+                            total_gems += bullet.gems
                             bullet.kill()
                 if event.button == 7:
                     player_one.speed = SLOW
@@ -378,7 +378,7 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                         new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                         sprites.add(new_orb)
                         orbs.add(new_orb)
-                        total_gems += 1
+                        total_gems += bullet.gems
                         bullet.kill()
                 else:
                     death = True
@@ -391,8 +391,8 @@ def StageOne(boss, magic_circle, bullets, sprites, players, orbs,
                     if lives == 0:
                         stage = False
                         return 1, points, total_graze, total_gems, player_one.clears,\
-                               False, lives, pause_differential, player_one, extend_10k,\
-                               extend_25k, extend_50k
+                            False, lives, pause_differential, player_one, extend_10k,\
+                            extend_25k, extend_50k
                     else:
                         lives -= 1
                     player_one = player.Player(256, 660)

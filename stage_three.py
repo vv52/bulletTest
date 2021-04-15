@@ -35,7 +35,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 3950
+    phase_counter = 0
     frame_counter = 0
     ticker = 0
     best_points = 0
@@ -116,7 +116,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
-                            total_gems += 1
+                            total_gems += bullet.gems
                             bullet.kill()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
@@ -137,7 +137,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                             new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                             sprites.add(new_orb)
                             orbs.add(new_orb)
-                            total_gems += 1
+                            total_gems += bullet.gems
                             bullet.kill()
                 if event.button == 7:
                     player_one.speed = SLOW
@@ -207,12 +207,13 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
 
     # PHASE ONE
 
-        if ticker == 360:
+        if ticker == 359:
             ticker = 0
         if 1 <= phase_counter <= 900:
             magic_circle.fast = False
+            # ticker
             if frame_counter % 5 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4", ticker, bullets, sprites)
+                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 5, "s4", ticker / 2, bullets, sprites)
             if frame_counter % 60 == 0:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), 15, "b", -ticker, bullets, sprites)
             if frame_counter % 120 == 0:
@@ -269,6 +270,13 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
 
         if 3961 <= phase_counter <= 4860:
             magic_circle.fast = False
+            if frame_counter % 2 == 0:
+                attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
+                               phase_counter * 4 % 360, "b", bullets, sprites)
+            #if frame_counter % 10 == 0:
+            #    attacks.Gatling(vec(SCREEN_WIDTH / 8, SCREEN_HEIGHT - 8), 3, "up", 20, phase_counter, "b2", bullets, sprites)
+            #    attacks.Gatling(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 8), SCREEN_HEIGHT - 8),
+            #                    3, "up", 20, phase_counter, "b2", bullets, sprites)
             if frame_counter % 60 == 0:
                 if ticker_up:
                     attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
@@ -444,7 +452,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                         new_orb = collectibles.PointsOrb(bullet.pos.x, bullet.pos.y)
                         sprites.add(new_orb)
                         orbs.add(new_orb)
-                        total_gems += 1
+                        total_gems += bullet.gems
                         bullet.kill()
                 else:
                     death = True
