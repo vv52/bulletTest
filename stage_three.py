@@ -35,7 +35,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
     current_time = time() - time()
     start_time = time()
     rand = Random()
-    phase_counter = 0
+    phase_counter = 3950
     frame_counter = 0
     ticker = 0
     best_points = 0
@@ -262,15 +262,37 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
 
     # PHASE THREE
 
-        if 3960 <= phase_counter <= 4860:
+        if phase_counter == 3960:
+            ticker2 = 0
+            ticker_up = True
+            invert = False
+
+        if 3961 <= phase_counter <= 4860:
             magic_circle.fast = False
-            if frame_counter % 2 == 0:
-                attacks.Gatling(vec(SCREEN_WIDTH - 8, SCREEN_HEIGHT / 2),
-                                    3, "left", 16, phase_counter, "s4", bullets, sprites)
-                attacks.Gatling(vec(16, SCREEN_HEIGHT / 2),
-                                   3, "right", 16, phase_counter, "s4i", bullets, sprites)
-            if frame_counter % 30 == 0:
-                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), 30, "s2", ticker, bullets, sprites)
+            if frame_counter % 60 == 0:
+                if ticker_up:
+                    attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
+                                   180 - (30 + ticker2), "ma", bullets, sprites)
+                else:
+                    attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
+                                   180 - (30 + ticker2), "mb", bullets, sprites)
+                if ticker2 == 120:
+                    ticker_up = False
+                elif ticker2 == 0:
+                    ticker_up = True
+                if ticker_up:
+                    ticker2 += 30
+                else:
+                    ticker2 -= 30
+            if frame_counter % 120 == 0:
+                attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), 90, "bd", bullets, sprites)
+        #    if frame_counter % 2 == 0:
+        #        attacks.Gatling(vec(SCREEN_WIDTH - 8, SCREEN_HEIGHT / 2),
+        #                            3, "left", 16, phase_counter, "s4", bullets, sprites)
+        #        attacks.Gatling(vec(16, SCREEN_HEIGHT / 2),
+        #                           3, "right", 16, phase_counter, "s4i", bullets, sprites)
+        #    if frame_counter % 30 == 0:
+        #        attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3), 30, "s2", ticker, bullets, sprites)
 
         if phase_counter == 4860:
             ticker2 = 0

@@ -110,6 +110,12 @@ def Stream(loc, angle, kind, bullets, sprites):
         new_bullet = projectiles.Bullet2(loc.x, loc.y, angle + 90)
     elif kind == "cr":
         new_bullet = projectiles.BulletCross(loc.x, loc.y, angle)
+    elif kind == "ma":
+        new_bullet = projectiles.BulletModA(loc.x, loc.y, angle)
+    elif kind == "mb":
+        new_bullet = projectiles.BulletModB(loc.x, loc.y, angle)
+    elif kind == "bd":
+        new_bullet = projectiles.BulletBarD(loc.x, loc.y, angle)
     else:
         new_bullet = projectiles.Bullet(loc.x, loc.y, angle + 90)
     bullets.add(new_bullet)

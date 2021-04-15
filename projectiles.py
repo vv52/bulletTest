@@ -206,3 +206,77 @@ class BulletCross(BulletSprite):
         self.rect = self.image.get_rect()
         self.rect.center = (cx, cy)
         self.rect.center = self.pos
+
+
+class BulletModA(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/bullet_mod-a.png", spawn_x, spawn_y, angle)
+        self.mask_img = pygame.image.load("res/img/bullet_mod-a_collide.png")
+        self.mask = pygame.mask.from_surface(self.mask_img)
+        self.original_image = pygame.image.load("res/img/bullet_mod-a.png")
+        self.velocity = Vector2(1, 0).rotate(angle) * 2
+        self.pos = vec(self.rect.center)
+        self.frame = 0
+        self.image = self.original_image
+        self.speed = 1
+        self.spin = 0
+
+    def update(self):
+        self.pos += self.velocity
+        cx, cy = self.rect.center
+        self.image = pygame.transform.rotate(self.original_image, self.spin)
+        self.mask = pygame.mask.from_surface(pygame.transform.rotate(self.mask_img, self.spin))
+        self.spin += self.speed % 360
+        self.rect = self.image.get_rect()
+        self.rect.center = (cx, cy)
+        self.rect.center = self.pos
+
+
+class BulletModB(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/bullet_mod-b.png", spawn_x, spawn_y, angle)
+        self.mask_img = pygame.image.load("res/img/bullet_mod-b_collide.png")
+        self.mask = pygame.mask.from_surface(self.mask_img)
+        self.original_image = pygame.image.load("res/img/bullet_mod-b.png")
+        self.velocity = Vector2(1, 0).rotate(angle) * 2
+        self.pos = vec(self.rect.center)
+        self.frame = 0
+        self.image = self.original_image
+        self.speed = -1
+        self.spin = 0
+
+    def update(self):
+        self.pos += self.velocity
+        cx, cy = self.rect.center
+        self.image = pygame.transform.rotate(self.original_image, self.spin)
+        self.mask = pygame.mask.from_surface(pygame.transform.rotate(self.mask_img, self.spin))
+        self.spin += self.speed % 360
+        self.rect = self.image.get_rect()
+        self.rect.center = (cx, cy)
+        self.rect.center = self.pos
+
+
+class BulletBarD(BulletSprite):
+    def __init__(self, spawn_x, spawn_y, angle):
+        super().__init__("res/img/bullet_bar-d2.png", spawn_x, spawn_y, angle)
+        self.mask_img = pygame.image.load("res/img/bullet_bar-d_collide.png")
+        self.mask = pygame.mask.from_surface(self.mask_img)
+        self.original_image = pygame.image.load("res/img/bullet_bar-d2.png")
+        self.velocity = Vector2(1, 0).rotate(angle) * 2
+        self.pos = vec(self.rect.center)
+        self.frame = 0
+        self.image = self.original_image
+        self.speed = 2
+        self.spin = 0
+
+    def update(self):
+        self.pos += self.velocity
+        cx, cy = self.rect.center
+        self.image = pygame.transform.rotate(self.original_image, self.spin)
+        self.mask = pygame.mask.from_surface(pygame.transform.rotate(self.mask_img, self.spin))
+        self.spin += self.speed % 360
+        self.rect = self.image.get_rect()
+        self.rect.center = (cx, cy)
+        self.rect.center = self.pos
+
+
