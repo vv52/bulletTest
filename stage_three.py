@@ -1,12 +1,14 @@
+from random import Random
+from time import time
+
 import pygame
 from pygame.locals import *
-from time import time
-import player
+
 import attacks
-import pause
 import collectibles
 import movement
-from random import Random
+import pause
+import player
 
 FPS = 60
 
@@ -28,8 +30,8 @@ life_icon = pygame.image.load("res/img/life.png")
 
 
 def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
-             screen, font, clock, prev_points, player_one, player_magic_circle,
-             lives, pause_differential, joysticks, options, e10, e25, e50):
+               screen, font, clock, prev_points, player_one, player_magic_circle,
+               lives, pause_differential, joysticks, options, e10, e25, e50):
     background = pygame.image.load("res/img/background8.png")
     best_time = time() - time()
     current_time = time() - time()
@@ -67,8 +69,8 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
             if event.type == pygame.QUIT:
                 stage = False
                 return 0, points, total_graze, total_gems, player_one.clears, \
-                       False, lives, pause_differential, player_one, extend_10k,\
-                               extend_25k, extend_50k
+                       False, lives, pause_differential, player_one, extend_10k, \
+                       extend_25k, extend_50k
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     player_one.up = True
@@ -107,7 +109,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one, extend_10k,\
+                               False, lives, pause_differential, player_one, extend_10k, \
                                extend_25k, extend_50k
                 if event.key == pygame.K_z and player_one.spawn_timer == 0:
                     if player_one.clears > 0:
@@ -168,7 +170,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                     if not unpause:
                         stage = False
                         return 0, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one, extend_10k,\
+                               False, lives, pause_differential, player_one, extend_10k, \
                                extend_25k, extend_50k
             if event.type == JOYBUTTONUP:
                 if event.button == 7:
@@ -197,7 +199,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
             if event.type == JOYDEVICEREMOVED:
                 joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
 
-    # PHASE TRANSITION / RESET
+        # PHASE TRANSITION / RESET
 
         if phase_counter < 200:
             at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
@@ -205,7 +207,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                 magic_circle.fast = True
             magic_circle.rect.center = boss.rect.center
 
-    # PHASE ONE
+        # PHASE ONE
 
         if ticker == 359:
             ticker = 0
@@ -231,7 +233,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                 frame_counter = 0
         ticker += 1
 
-    # PHASE TRANSITION
+        # PHASE TRANSITION
 
         if 1800 < phase_counter < 1980:
             at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4))
@@ -239,7 +241,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                 magic_circle.fast = True
             magic_circle.rect.center = boss.rect.center
 
-    # PHASE TWO
+        # PHASE TWO
 
         if 1980 <= phase_counter <= 3780:
             magic_circle.fast = False
@@ -251,9 +253,9 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                                           6, "s4i", -ticker - 10, bullets, sprites)
             if frame_counter % 120 == 60:
                 attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 4),
-                                      30, "b2", rand.randint(0,45), bullets, sprites)
+                                      30, "b2", rand.randint(0, 45), bullets, sprites)
 
-    # PHASE TRANSITION
+        # PHASE TRANSITION
 
         if 3780 < phase_counter < 4060:
             at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3))
@@ -261,7 +263,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                 magic_circle.fast = True
             magic_circle.rect.center = boss.rect.center
 
-    # PHASE THREE
+        # PHASE THREE
 
         if phase_counter == 3960:
             ticker2 = 0
@@ -273,7 +275,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
             if frame_counter % 2 == 0:
                 attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3),
                                phase_counter * 4 % 360, "b", bullets, sprites)
-            #if frame_counter % 10 == 0:
+            # if frame_counter % 10 == 0:
             #    attacks.Gatling(vec(SCREEN_WIDTH / 8, SCREEN_HEIGHT - 8), 3, "up", 20, phase_counter, "b2", bullets, sprites)
             #    attacks.Gatling(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 8), SCREEN_HEIGHT - 8),
             #                    3, "up", 20, phase_counter, "b2", bullets, sprites)
@@ -331,91 +333,91 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                 else:
                     attacks.BarSpawner(32, 30, 90, "b", bullets, sprites)
 
-    #        if frame_counter % 2 == 0:
-    #            attacks.Gatling(vec(SCREEN_WIDTH - 8, SCREEN_HEIGHT / 2),
-    #                                3, "left", 16, phase_counter, "s4", bullets, sprites)
-    #           attacks.Gatling(vec(16, SCREEN_HEIGHT / 2),
-    #                               3, "right", 16, phase_counter, "s4i", bullets, sprites)
-    #        if frame_counter % 2 == 0:
-    #            attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16), 240, "w", bullets, sprites)
-    #            attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16), 120, "w", bullets, sprites)
-    #        if frame_counter % 30 == 0:
-    #            attacks.QuarterSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16), 180, "w", 0, bullets, sprites)
+        #        if frame_counter % 2 == 0:
+        #            attacks.Gatling(vec(SCREEN_WIDTH - 8, SCREEN_HEIGHT / 2),
+        #                                3, "left", 16, phase_counter, "s4", bullets, sprites)
+        #           attacks.Gatling(vec(16, SCREEN_HEIGHT / 2),
+        #                               3, "right", 16, phase_counter, "s4i", bullets, sprites)
+        #        if frame_counter % 2 == 0:
+        #            attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16), 240, "w", bullets, sprites)
+        #            attacks.Stream(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16), 120, "w", bullets, sprites)
+        #        if frame_counter % 30 == 0:
+        #            attacks.QuarterSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 16), 180, "w", 0, bullets, sprites)
 
-    #    if 5760 < phase_counter < 6040:
-    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8))
-    #        if not at_position:
-    #            magic_circle.fast = True
-    #        magic_circle.rect.center = boss.rect.center
+        #    if 5760 < phase_counter < 6040:
+        #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8))
+        #        if not at_position:
+        #            magic_circle.fast = True
+        #        magic_circle.rect.center = boss.rect.center
 
-    # PHASE FOUR
+        # PHASE FOUR
 
-    #    if 5940 <= phase_counter <= 7740:
-    #        magic_circle.fast = False
-    #        if frame_counter % 30 == 0:
-    #            if ticker < 40:
-    #                ticker += 1
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
-    #                                  ticker, "s4", ticker * 10, bullets, sprites)
-    #        if frame_counter % 60 == 0:
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)),
-    #                                  15, "s2", rand.randint(0, 360), bullets, sprites)
-    #        if frame_counter % 100 == 0:
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
-    #                                  ticker / 5, "s4i", ticker * 2, bullets, sprites)
-    #        if frame_counter == 600:
-    #            frame_counter = 0
+        #    if 5940 <= phase_counter <= 7740:
+        #        magic_circle.fast = False
+        #        if frame_counter % 30 == 0:
+        #            if ticker < 40:
+        #                ticker += 1
+        #            attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
+        #                                  ticker, "s4", ticker * 10, bullets, sprites)
+        #        if frame_counter % 60 == 0:
+        #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 4, SCREEN_HEIGHT - (SCREEN_HEIGHT / 8)),
+        #                                  15, "s2", rand.randint(0, 360), bullets, sprites)
+        #        if frame_counter % 100 == 0:
+        #            attacks.CircleSpawner(vec(SCREEN_WIDTH - (SCREEN_WIDTH / 4), SCREEN_HEIGHT / 8),
+        #                                  ticker / 5, "s4i", ticker * 2, bullets, sprites)
+        #        if frame_counter == 600:
+        #            frame_counter = 0
 
-    # PHASE TRANSITION
+        # PHASE TRANSITION
 
-    #    if 7740 < phase_counter < 7800:
-    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10))
-    #        if not at_position:
-    #            magic_circle.fast = True
-    #        magic_circle.rect.center = boss.rect.center
+        #    if 7740 < phase_counter < 7800:
+        #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 10))
+        #        if not at_position:
+        #            magic_circle.fast = True
+        #        magic_circle.rect.center = boss.rect.center
 
-    # PHASE FOUR AND A HALF
+        # PHASE FOUR AND A HALF
 
-    #    if 7800 <= phase_counter <= 8020:
-    #        magic_circle.fast = False
-    #        if frame_counter % 10 == 0:
-    #            attacks.BarSpawner(32, 80, rand.randint(45, 135), "w", bullets, sprites)
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH - 16, 16), 10, "b", rand.randint(90, 135), bullets, sprites)
-    #            attacks.CircleSpawner(vec(16, 16), 10, "b", rand.randint(0, 45), bullets, sprites)
-    #        if frame_counter == 60:
-    #            frame_counter = 0
+        #    if 7800 <= phase_counter <= 8020:
+        #        magic_circle.fast = False
+        #        if frame_counter % 10 == 0:
+        #            attacks.BarSpawner(32, 80, rand.randint(45, 135), "w", bullets, sprites)
+        #            attacks.CircleSpawner(vec(SCREEN_WIDTH - 16, 16), 10, "b", rand.randint(90, 135), bullets, sprites)
+        #            attacks.CircleSpawner(vec(16, 16), 10, "b", rand.randint(0, 45), bullets, sprites)
+        #        if frame_counter == 60:
+        #            frame_counter = 0
 
-    # PHASE TRANSITION
+        # PHASE TRANSITION
 
-    #    if 8020 < phase_counter < 8200:
-    #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
-    #        if not at_position:
-    #            magic_circle.fast = True
-    #        magic_circle.rect.center = boss.rect.center
+        #    if 8020 < phase_counter < 8200:
+        #        at_position = movement.FrameMove(boss.pos, vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2))
+        #        if not at_position:
+        #            magic_circle.fast = True
+        #        magic_circle.rect.center = boss.rect.center
 
-    #    if phase_counter == 8199:
-    #        for bullet in bullets:
-    #            bullet.kill()
+        #    if phase_counter == 8199:
+        #        for bullet in bullets:
+        #            bullet.kill()
 
-    # PHASE FIVE
+        # PHASE FIVE
 
-    #    if 8200 <= phase_counter <= 10000:
-    #        magic_circle.fast = False
-    #        if frame_counter % 10 == 0:
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-    #                                  5, "b", rand.randint(0, 360), bullets, sprites)
-    #        if frame_counter % 100 == 0:
-    #            if phase_counter < 9100:
-    #                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-    #                                  40, "s4i", rand.randint(0, 360), bullets, sprites)
-    #            else:
-    #                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-    #                                      40, "s4", rand.randint(0, 360), bullets, sprites)
-    #        if frame_counter % 500 == 0:
-    #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
-    #                                  20, "w", rand.randint(0, 360), bullets, sprites)
+        #    if 8200 <= phase_counter <= 10000:
+        #        magic_circle.fast = False
+        #        if frame_counter % 10 == 0:
+        #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        #                                  5, "b", rand.randint(0, 360), bullets, sprites)
+        #        if frame_counter % 100 == 0:
+        #            if phase_counter < 9100:
+        #                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        #                                  40, "s4i", rand.randint(0, 360), bullets, sprites)
+        #            else:
+        #                attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        #                                      40, "s4", rand.randint(0, 360), bullets, sprites)
+        #        if frame_counter % 500 == 0:
+        #            attacks.CircleSpawner(vec(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
+        #                                  20, "w", rand.randint(0, 360), bullets, sprites)
 
-    # END STAGE
+        # END STAGE
 
         if phase_counter == 10000:
             for bullet in bullets:
@@ -427,7 +429,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
             return 1, points, total_graze, total_gems, player_one.clears, True, lives, pause_differential, player_one, \
                    extend_10k, extend_25k, extend_50k
 
-    # HANDLE PLAYER
+        # HANDLE PLAYER
 
         player_one.move()
         player_magic_circle.rect.center = player_one.rect.center
@@ -465,7 +467,7 @@ def StageThree(boss, magic_circle, bullets, sprites, players, orbs,
                     if lives == 0:
                         stage = False
                         return 1, points, total_graze, total_gems, player_one.clears, \
-                               False, lives, pause_differential, player_one, extend_10k,\
+                               False, lives, pause_differential, player_one, extend_10k, \
                                extend_25k, extend_50k
                     else:
                         lives -= 1

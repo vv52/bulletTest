@@ -50,31 +50,31 @@ def BarSpawner(loc_y, div, angle, kind, bullets, sprites):
     while bullet_counter < div:
         if bullet_counter < bound or bullet_counter > bound + range:
             if kind == "w":
-                new_bullet = projectiles.WarblyBullet(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.WarblyBullet(space * bullet_counter + 13, loc_y, angle)
             elif kind == "s":
-                new_bullet = projectiles.SpiralBullet(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.SpiralBullet(space * bullet_counter + 13, loc_y, angle)
             elif kind == "s2":
-                new_bullet = projectiles.SpiralBullet2(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.SpiralBullet2(space * bullet_counter + 13, loc_y, angle)
             elif kind == "s3":
-                new_bullet = projectiles.SpiralBullet3(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.SpiralBullet3(space * bullet_counter + 13, loc_y, angle)
             elif kind == "s3i":
-                new_bullet = projectiles.SpiralBullet3Inverse(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.SpiralBullet3Inverse(space * bullet_counter + 13, loc_y, angle)
             elif kind == "s4":
-                new_bullet = projectiles.SpiralBullet4(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.SpiralBullet4(space * bullet_counter + 13, loc_y, angle)
             elif kind == "s4i":
-                new_bullet = projectiles.SpiralBullet4Inverse(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.SpiralBullet4Inverse(space * bullet_counter + 13, loc_y, angle)
             elif kind == "b2":
-                new_bullet = projectiles.Bullet2(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.Bullet2(space * bullet_counter + 13, loc_y, angle)
             elif kind == "cr":
-                new_bullet = projectiles.BulletCross(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.BulletCross(space * bullet_counter + 13, loc_y, angle)
             elif kind == "ma":
-                new_bullet = projectiles.BulletModA(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.BulletModA(space * bullet_counter + 13, loc_y, angle)
             elif kind == "mb":
-                new_bullet = projectiles.BulletModB(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.BulletModB(space * bullet_counter + 13, loc_y, angle)
             elif kind == "bd":
-                new_bullet = projectiles.BulletBarD(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.BulletBarD(space * bullet_counter + 13, loc_y, angle)
             else:
-                new_bullet = projectiles.Bullet(space * bullet_counter, loc_y, angle)
+                new_bullet = projectiles.Bullet(space * bullet_counter + 13, loc_y, angle)
             bullets.add(new_bullet)
             sprites.add(new_bullet)
         bullet_counter += 1
